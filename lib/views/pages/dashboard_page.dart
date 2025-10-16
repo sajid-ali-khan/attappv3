@@ -24,7 +24,10 @@ class DashboardPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Your classes', style: TextStyle(fontSize: 18),),
+            Text('Welcome back,'),
+            Text('Mr. Zahoor Ul Haq', style: TextStyle(fontSize: 24),),
+            SizedBox(height: 20,),
+            Text('Your Classes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),),
             SizedBox(height: 20,),
             Column(
               children: Constants.assignedClasses.map((e){

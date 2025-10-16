@@ -1,5 +1,6 @@
 import 'package:attappv1/data/constants.dart';
 import 'package:attappv1/data/utils.dart';
+import 'package:attappv1/views/pages/mark_attendance_page.dart';
 import 'package:attappv1/views/widgets/session_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -31,7 +32,11 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
               children: [
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        return MarkAttendancePage(studentList: Constants.students);
+                      },));
+                    },
                     label: Text('New Session'),
                     icon: Icon(Icons.add),
                   ),
@@ -46,8 +51,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                 ),
               ],
             ),
-
-            SizedBox(height: 20.0),
+            SizedBox(height: 24,),
             Text(
               'Sessions for ${DateFormat.MMM().format(_selectedDay!)} ${_selectedDay!.day}, ${_selectedDay!.year}',
               style: TextStyle(fontSize: 16),
@@ -58,7 +62,6 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                 return SessionCard(session: e);
               }).toList(),
             ),
-            SizedBox(height: 30),
             TableCalendar(
               focusedDay: _focusedDay,
               firstDay: kFirstDay,

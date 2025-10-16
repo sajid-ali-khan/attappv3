@@ -1,5 +1,6 @@
 import 'package:attappv1/data/models/student.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class MarkAttendancePage extends StatefulWidget {
   const MarkAttendancePage({super.key, required this.studentList});
@@ -25,7 +26,9 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Attendance')),
+      appBar: AppBar(title: Text('Attendance'), actions: [
+        Text(DateFormat.yMMMMd('en_US').format(DateTime.now()))
+      ],),
       body: Container(
         width: double.infinity,
         padding: EdgeInsets.all(16),
@@ -76,19 +79,24 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
               child: SingleChildScrollView(
                 child: Column(
                   children: widget.studentList.map((e) {
-                    return SwitchListTile(
-                      value: e.present,
-                      onChanged: (bool val) {
-                        setState(() {
-                          e.present = val;
-                          if (val) {
-                            _presentCount += 1;
-                          } else {
-                            _presentCount -= 1;
-                          }
-                        });
-                      },
-                      title: Text('${e.roll} - ${e.name}'),
+                    return Column(
+                      children: [
+                        SwitchListTile(
+                          value: e.present,
+                          onChanged: (bool val) {
+                            setState(() {
+                              e.present = val;
+                              if (val) {
+                                _presentCount += 1;
+                              } else {
+                                _presentCount -= 1;
+                              }
+                            });
+                          },
+                          title: Text('${e.roll} - ${e.name}'),
+                        ),
+                        Divider()
+                      ],
                     );
                   }).toList(),
                 ),

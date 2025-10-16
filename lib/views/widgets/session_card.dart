@@ -22,7 +22,7 @@ class SessionCard extends StatelessWidget {
           leading: Text(DateFormat.jm().format(session.markedAt)),
           trailing: Icon(Icons.arrow_forward_ios),
         ),
-        SizedBox(height: 16,)
+        Divider()
       ],
     );
   }

@@ -17,7 +17,8 @@ class ClassCard extends StatelessWidget {
             },));
           },
           title: Text(assignedClass.subjectName),
-          trailing: Icon(Icons.arrow_forward_ios),
+          leading: Text(assignedClass.className),
+          trailing: Icon(Icons.arrow_forward_ios,),
         ),
         SizedBox(height: 16,)
       ],
