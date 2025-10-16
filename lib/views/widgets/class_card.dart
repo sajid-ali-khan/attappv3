@@ -1,0 +1,26 @@
+import 'package:attappv1/data/models/assigned_class.dart';
+import 'package:attappv1/views/pages/class_details_page.dart';
+import 'package:flutter/material.dart';
+
+class ClassCard extends StatelessWidget {
+  const ClassCard({super.key, required this.assignedClass});
+
+  final AssignedClass assignedClass;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ListTile(
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return ClassDetailsPage(subjectName: assignedClass.subjectName);
+            },));
+          },
+          title: Text(assignedClass.subjectName),
+          trailing: Icon(Icons.arrow_forward_ios),
+        ),
+        SizedBox(height: 16,)
+      ],
+    );
+  }
+}
