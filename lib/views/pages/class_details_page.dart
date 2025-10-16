@@ -1,10 +1,9 @@
 import 'package:attappv1/data/constants.dart';
-import 'package:attappv1/data/utils.dart';
 import 'package:attappv1/views/pages/mark_attendance_page.dart';
+import 'package:attappv1/views/pages/report_page.dart';
 import 'package:attappv1/views/widgets/session_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 class ClassDetailsPage extends StatefulWidget {
   const ClassDetailsPage({super.key, required this.subjectName});
@@ -16,8 +15,6 @@ class ClassDetailsPage extends StatefulWidget {
 }
 
 class _ClassDetailsPageState extends State<ClassDetailsPage> {
-  CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay = DateTime.now();
   @override
   Widget build(BuildContext context) {
@@ -33,9 +30,16 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                 Expanded(
                   child: FilledButton.icon(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
-                        return MarkAttendancePage(studentList: Constants.students);
-                      },));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return MarkAttendancePage(
+                              studentList: Constants.students,
+                            );
+                          },
+                        ),
+                      );
                     },
                     label: Text('New Session'),
                     icon: Icon(Icons.add),
@@ -44,14 +48,23 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                 SizedBox(width: 10),
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return ReportPage();
+                          },
+                        ),
+                      );
+                    },
                     label: Text('Report'),
                     icon: Icon(Icons.analytics_outlined),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 24,),
+            SizedBox(height: 24),
             Text(
               'Sessions for ${DateFormat.MMM().format(_selectedDay!)} ${_selectedDay!.day}, ${_selectedDay!.year}',
               style: TextStyle(fontSize: 16),
@@ -62,32 +75,24 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                 return SessionCard(session: e);
               }).toList(),
             ),
-            TableCalendar(
-              focusedDay: _focusedDay,
-              firstDay: kFirstDay,
-              lastDay: kLastDay,
-              calendarFormat: _calendarFormat,
-              selectedDayPredicate: (day) {
-                return isSameDay(_selectedDay, day);
-              },
-              onDaySelected: (selectedDay, focusedDay) {
-                if (!isSameDay(_selectedDay, selectedDay)) {
+
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: CalendarDatePicker(
+                initialDate: _selectedDay,
+                firstDate: DateTime(
+                  2000,
+                ), // Define your earliest allowable date
+                lastDate: DateTime(2050), // Define your latest allowable date
+                onDateChanged: (DateTime newDate) {
                   setState(() {
-                    _selectedDay = selectedDay;
-                    _focusedDay = focusedDay;
+                    _selectedDay = newDate;
                   });
-                }
-              },
-              onFormatChanged: (format) {
-                if (_calendarFormat != format) {
-                  setState(() {
-                    _calendarFormat = format;
-                  });
-                }
-              },
-              onPageChanged: (focusedDay) {
-                _focusedDay = focusedDay;
-              },
+                },
+              ),
             ),
           ],
         ),

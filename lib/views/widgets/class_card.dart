@@ -11,16 +11,28 @@ class ClassCard extends StatelessWidget {
     return Column(
       children: [
         ListTile(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          tileColor: Colors.deepPurple[50],
+          splashColor: Colors.deepPurple[50],
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return ClassDetailsPage(subjectName: assignedClass.subjectName);
-            },));
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return ClassDetailsPage(
+                    subjectName: assignedClass.subjectName,
+                  );
+                },
+              ),
+            );
           },
           title: Text(assignedClass.subjectName),
           leading: Text(assignedClass.className),
-          trailing: Icon(Icons.arrow_forward_ios,),
+          trailing: Icon(Icons.arrow_forward_ios),
         ),
-        SizedBox(height: 16,)
+        SizedBox(height: 10),
       ],
     );
   }

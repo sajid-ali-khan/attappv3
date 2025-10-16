@@ -27,7 +27,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Attendance'), actions: [
-        Text(DateFormat.yMMMMd('en_US').format(DateTime.now()))
+        Text(DateFormat.yMMMd('en_US').add_jm().format(DateTime.now()))
       ],),
       body: Container(
         width: double.infinity,

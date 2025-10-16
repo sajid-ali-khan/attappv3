@@ -6,23 +6,33 @@ import 'package:intl/intl.dart';
 
 class SessionCard extends StatelessWidget {
   const SessionCard({super.key, required this.session});
-  
+
   final Session session;
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         ListTile(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          tileColor: Colors.deepPurple[50],
+          splashColor: Colors.deepPurple[50],
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return MarkAttendancePage(studentList: Constants.students);
-            },));
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return MarkAttendancePage(studentList: Constants.students);
+                },
+              ),
+            );
           },
           title: Text('Session ${session.sessionNo}'),
           leading: Text(DateFormat.jm().format(session.markedAt)),
           trailing: Icon(Icons.arrow_forward_ios),
         ),
-        Divider()
+        SizedBox(height: 10,)
       ],
     );
   }
