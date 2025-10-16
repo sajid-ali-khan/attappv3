@@ -1,35 +1,40 @@
-import 'package:attappv1/data/models/assigned_class.dart';
+import 'package:attappv1/data/models/attendance_row.dart';
+import 'package:attappv1/data/models/class_model.dart';
 import 'package:attappv1/data/models/report_row.dart';
-import 'package:attappv1/data/models/session.dart';
-import 'package:attappv1/data/models/student.dart';
+import 'package:attappv1/data/models/session_model.dart';
+import 'package:attappv1/data/models/student_model.dart';
 
 class Constants {
-	static var assignedClasses = [
-		AssignedClass("Theory of Computation", "2nd Sem CSE"),
-		AssignedClass("Artificial Intelligence", "4th Sem CSE"),
-		AssignedClass("Object Oriented Design and Principles", "6th Sem CSE"),
+	static List<ClassModel> classes = [
+		ClassModel(subjectName: "Theory of Computation", className:  "2nd Sem CSE", courseId: 0),
+		ClassModel(subjectName: "Artificial Intelligence", className:  "4th Sem CSE", courseId: 0),
+		ClassModel(subjectName: "Object Oriented Design and Principles", className:  "6th Sem CSE", courseId: 0),
 	];
 
-  static var sessions = [
-    Session(1, DateTime.now()),
-    Session(2, DateTime.now())
+  static List<SessionModel> sessions = [
+    SessionModel(sessionId: 0, sessionName: 'Session 1', updatedAt: DateTime.now()),
+    SessionModel(sessionId: 0, sessionName: 'Session 2', updatedAt: DateTime.now()),
   ];
 
-  static List<Student> students = [
-    Student("sajid", "229x1a2851"),
-    Student("theja", "229x1a2842"),
-    Student("musa", "229x1a2870"),
-    Student("praveen", "229x1a2845"),
-    Student("raghu", "229x1a2861"),
-    Student("charan", "229x1a2862"),
-    Student("uma mahesh", "229x1a2850"),
-    Student("harsha", "229x1a2852"),
-    Student("sreeram", "229x1a2844"),
-    Student("navneeth", "229x1a2846"),
-    Student("vijay", "229x1a2841"),
+  static List<StudentModel> students = [
+    StudentModel(name: "Patan Sajid Ali Khan", roll: "229x1a2851"),
+    StudentModel(name: "theja", roll: "229x1a2842"),
+    StudentModel(name: "musa", roll: "229x1a2870"),
+    StudentModel(name: "praveen", roll: "229x1a2845"),
+    StudentModel(name: "raghu", roll: "229x1a2861"),
+    StudentModel(name: "charan", roll: "229x1a2862"),
+    StudentModel(name: "uma mahesh", roll: "229x1a2850"),
+    StudentModel(name: "harsha", roll: "229x1a2852"),
+    StudentModel(name: "sreeram", roll: "229x1a2844"),
+    StudentModel(name: "navneeth", roll: "229x1a2846"),
+    StudentModel(name: "vijay", roll: "229x1a2841"),
   ];
+
+  static List<AttendanceRow> attendanceList = students.map((s){
+    return AttendanceRow(student: s);
+  }).toList();
 
   static var report = students.map((s){
-    return ReportRow(s, 89.0);
+    return ReportRow(student: s, percentage: 89.0);
   }).toList();
 }

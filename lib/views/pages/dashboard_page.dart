@@ -30,7 +30,7 @@ class DashboardPage extends StatelessWidget {
             Text('Your Classes', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),),
             SizedBox(height: 20,),
             Column(
-              children: Constants.assignedClasses.map((e){
+              children: Constants.classes.map((e){
                 return ClassCard(assignedClass: e);
               }).toList(),
             )

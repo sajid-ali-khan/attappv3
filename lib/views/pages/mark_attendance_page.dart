@@ -1,10 +1,10 @@
-import 'package:attappv1/data/models/student.dart';
+import 'package:attappv1/data/models/attendance_row.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class MarkAttendancePage extends StatefulWidget {
-  const MarkAttendancePage({super.key, required this.studentList});
-  final List<Student> studentList;
+  const MarkAttendancePage({super.key, required this.attendanceList});
+  final List<AttendanceRow> attendanceList;
   @override
   State<MarkAttendancePage> createState() => _MarkAttendancePageState();
 }
@@ -12,15 +12,15 @@ class MarkAttendancePage extends StatefulWidget {
 class _MarkAttendancePageState extends State<MarkAttendancePage> {
   int _presentCount = 0;
   void markAllPresent() {
-    widget.studentList.forEach((s) {
+    for (var s in widget.attendanceList) {
       s.present = true;
-    });
+    }
   }
 
   void markAllAbsent() {
-    widget.studentList.forEach((s) {
+    for (var s in widget.attendanceList) {
       s.present = false;
-    });
+    }
   }
 
   @override
@@ -38,12 +38,12 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Present'),
-                Text('$_presentCount/${widget.studentList.length}'),
+                Text('$_presentCount/${widget.attendanceList.length}'),
               ],
             ),
             SizedBox(height: 10),
             LinearProgressIndicator(
-              value: _presentCount / widget.studentList.length,
+              value: _presentCount / widget.attendanceList.length,
               minHeight: 6,
             ),
             SizedBox(height: 40),
@@ -54,7 +54,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                     onPressed: () {
                       setState(() {
                         markAllPresent();
-                        _presentCount = widget.studentList.length;
+                        _presentCount = widget.attendanceList.length;
                       });
                     },
                     child: Text('Mark All Present'),
@@ -78,7 +78,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
-                  children: widget.studentList.map((e) {
+                  children: widget.attendanceList.map((e) {
                     return Column(
                       children: [
                         SwitchListTile(
@@ -93,7 +93,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                               }
                             });
                           },
-                          title: Text('${e.roll} - ${e.name}'),
+                          title: Text('${e.student.roll} - ${e.student.name}'),
                         ),
                         Divider()
                       ],

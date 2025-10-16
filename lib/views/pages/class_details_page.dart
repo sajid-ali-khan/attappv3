@@ -35,7 +35,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                         MaterialPageRoute(
                           builder: (context) {
                             return MarkAttendancePage(
-                              studentList: Constants.students,
+                              attendanceList: Constants.attendanceList,
                             );
                           },
                         ),

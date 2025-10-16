@@ -1,8 +1,12 @@
-import 'package:attappv1/data/models/student.dart';
+import 'package:attappv1/data/models/student_model.dart';
 
 class ReportRow {
-  late Student student;
-  late double percentage;
+  StudentModel student;
+  double percentage;
 
-  ReportRow(this.student, this.percentage);
+  ReportRow({required this.student, required this.percentage});
+
+  factory ReportRow.fromJson(Map<String, dynamic> json){
+    return ReportRow(student: json['student'], percentage: json['percentage']);
+  }
 }
