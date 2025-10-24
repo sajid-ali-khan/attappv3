@@ -1,7 +1,7 @@
 import 'package:attappv1/data/constants.dart';
-import 'package:attappv1/views/pages/mark_attendance_page.dart';
-import 'package:attappv1/views/pages/report_page.dart';
-import 'package:attappv1/views/widgets/session_card.dart';
+import 'package:attappv1/ui/views/pages/mark_attendance_page.dart';
+import 'package:attappv1/ui/views/pages/report_page.dart';
+import 'package:attappv1/ui/views/widgets/session_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

@@ -1,6 +1,6 @@
 import 'package:attappv1/data/constants.dart';
-import 'package:attappv1/views/pages/login_page.dart';
-import 'package:attappv1/views/widgets/class_card.dart';
+import 'package:attappv1/ui/views/pages/login_page.dart';
+import 'package:attappv1/ui/views/widgets/class_card.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatelessWidget {

@@ -24,7 +24,7 @@ class ReportWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(14.0),
                         child: Row(
                           crossAxisAlignment:
                               CrossAxisAlignment.center, // Center vertically
@@ -57,7 +57,7 @@ class ReportWidget extends StatelessWidget {
                             Text(
                               '${reportItem.percentage}%', // Added % here for clarity
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -65,6 +65,12 @@ class ReportWidget extends StatelessWidget {
                         ),
                       ),
                     );
+                    // return ListTile(
+                    //   tileColor: Colors.deepPurple[50],
+                    //   title: Text(reportItem.student.name),
+                    //   subtitle: Text(reportItem.student.roll),
+                    //   trailing: Text('${reportItem.percentage}%', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),
+                    // );
                   },
                 ),
               );

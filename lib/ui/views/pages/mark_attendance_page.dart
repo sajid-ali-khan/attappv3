@@ -93,7 +93,8 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                               }
                             });
                           },
-                          title: Text('${e.student.roll} - ${e.student.name}'),
+                          title: Text(e.student.name),
+                          subtitle: Text(e.student.roll),
                         ),
                         Divider()
                       ],

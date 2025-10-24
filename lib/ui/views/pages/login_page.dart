@@ -1,4 +1,4 @@
-import 'package:attappv1/views/pages/dashboard_page.dart';
+import 'package:attappv1/ui/views/pages/dashboard_page.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {

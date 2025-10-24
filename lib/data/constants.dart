@@ -25,7 +25,7 @@ class Constants {
     StudentModel(name: "charan", roll: "229x1a2862"),
     StudentModel(name: "uma mahesh", roll: "229x1a2850"),
     StudentModel(name: "harsha", roll: "229x1a2852"),
-    StudentModel(name: "sreeram", roll: "229x1a2844"),
+    StudentModel(name: "Ghadiyaram Jaya Sai Sreerama Kumar", roll: "229x1a2844"),
     StudentModel(name: "navneeth", roll: "229x1a2846"),
     StudentModel(name: "vijay", roll: "229x1a2841"),
   ];

@@ -1,7 +1,7 @@
 import 'package:attappv1/data/constants.dart';
 import 'package:attappv1/data/utils.dart';
-import 'package:attappv1/views/widgets/date_input.dart';
-import 'package:attappv1/views/widgets/report_widget.dart';
+import 'package:attappv1/ui/views/widgets/date_input.dart';
+import 'package:attappv1/ui/views/widgets/report_widget.dart';
 import 'package:flutter/material.dart';
 
 class ReportPage extends StatefulWidget {
@@ -61,7 +61,10 @@ class _ReportPageState extends State<ReportPage> {
             SizedBox(height: 12),
 
             Expanded(
-              child: ReportWidget(report: Constants.report)
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Container(child: ReportWidget(report: Constants.report)),
+              ),
             ),
           ],
         ),

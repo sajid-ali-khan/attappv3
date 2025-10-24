@@ -1,11 +1,13 @@
-import 'package:attappv1/data/models/class_model.dart';
-import 'package:attappv1/views/pages/class_details_page.dart';
+import 'package:attappv1/data/constants.dart';
+import 'package:attappv1/data/models/session_model.dart';
+import 'package:attappv1/ui/views/pages/mark_attendance_page.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class ClassCard extends StatelessWidget {
-  const ClassCard({super.key, required this.assignedClass});
+class SessionCard extends StatelessWidget {
+  const SessionCard({super.key, required this.session});
 
-  final ClassModel assignedClass;
+  final SessionModel session;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -21,18 +23,16 @@ class ClassCard extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return ClassDetailsPage(
-                    subjectName: assignedClass.subjectName,
-                  );
+                  return MarkAttendancePage(attendanceList: Constants.attendanceList);
                 },
               ),
             );
           },
-          title: Text(assignedClass.subjectName),
-          leading: Text(assignedClass.className),
+          title: Text(session.sessionName),
+          leading: Text(DateFormat.jm().format(session.updatedAt)),
           trailing: Icon(Icons.arrow_forward_ios),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 10,)
       ],
     );
   }
