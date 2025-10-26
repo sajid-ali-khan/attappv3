@@ -1,8 +1,10 @@
 import 'package:attappv1/data/models/attendance_row.dart';
-import 'package:attappv1/data/models/class_model.dart';
+import 'package:attappv1/data/models/class_model/class_model.dart';
 import 'package:attappv1/data/models/report_row.dart';
 import 'package:attappv1/data/models/session_model.dart';
 import 'package:attappv1/data/models/student_model.dart';
+
+String baseUrl = 'http://192.168.29.186:8080/api';
 
 class Constants {
 	static List<ClassModel> classes = [

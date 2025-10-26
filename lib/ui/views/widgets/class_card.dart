@@ -1,4 +1,4 @@
-import 'package:attappv1/data/models/class_model.dart';
+import 'package:attappv1/data/models/class_model/class_model.dart';
 import 'package:attappv1/ui/views/pages/class_details_page.dart';
 import 'package:flutter/material.dart';
 

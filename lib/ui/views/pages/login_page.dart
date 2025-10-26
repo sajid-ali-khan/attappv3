@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:attappv1/data/models/login_request/login_request.dart';
+import 'package:attappv1/data/services/auth_service.dart';
 import 'package:attappv1/ui/views/pages/dashboard_page.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +14,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,6 +33,7 @@ class _LoginPageState extends State<LoginPage> {
               Text('Sign in to manage attendance'),
               SizedBox(height: 30),
               TextField(
+                controller: usernameController,
                 keyboardType: TextInputType.numberWithOptions(signed: true),
                 decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
@@ -35,12 +42,15 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 20),
               TextField(
+                controller: passwordController,
                 obscureText: _obscureText,
                 decoration: InputDecoration(
                   border: const UnderlineInputBorder(),
                   labelText: 'Enter your password',
                   suffixIcon: IconButton(
-                    icon: _obscureText ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off),
+                    icon: _obscureText
+                        ? const Icon(Icons.visibility)
+                        : const Icon(Icons.visibility_off),
                     onPressed: () {
                       setState(() {
                         _obscureText =
@@ -52,14 +62,37 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 30),
               FilledButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return DashboardPage();
-                      },
-                    ),
+                onPressed: () async {
+                  String username = usernameController.text.trim();
+                  String password = passwordController.text.trim();
+
+                  log('username: $username, password: $password');
+
+                  if (username == '' || password == '') {
+                    return;
+                  }
+
+                  LoginRequest loginRequest = LoginRequest(
+                    username: username,
+                    password: password,
+                  );
+                  await loginUser(loginRequest).then(
+                    (value) => {
+                      if (value == null)
+                        {log('login failed.')}
+                      else
+                        {
+                          log('login success'),
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return DashboardPage();
+                              },
+                            ),
+                          ),
+                        },
+                    },
                   );
                 },
                 style: FilledButton.styleFrom(
