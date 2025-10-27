@@ -8,9 +8,9 @@ String baseUrl = 'http://192.168.29.186:8080/api';
 
 class Constants {
 	static List<ClassModel> classes = [
-		ClassModel(subjectName: "Theory of Computation", className:  "2nd Sem CSE", courseId: 0),
-		ClassModel(subjectName: "Artificial Intelligence", className:  "4th Sem CSE", courseId: 0),
-		ClassModel(subjectName: "Object Oriented Design and Principles", className:  "6th Sem CSE", courseId: 0),
+		ClassModel(subjectName: "Theory of Computation", className:  "2nd Sem CSE", classId: 0),
+		ClassModel(subjectName: "Artificial Intelligence", className:  "4th Sem CSE", classId: 0),
+		ClassModel(subjectName: "Object Oriented Design and Principles", className:  "6th Sem CSE", classId: 0),
 	];
 
   static List<SessionModel> sessions = [

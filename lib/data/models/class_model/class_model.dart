@@ -2,14 +2,14 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'class_model.g.dart';
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable()
 class ClassModel {
-  int courseId;
+  int classId;
   String className;
   String subjectName;
 
   ClassModel({
-    required this.courseId,
+    required this.classId,
     required this.className,
     required this.subjectName,
   });
