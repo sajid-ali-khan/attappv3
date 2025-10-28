@@ -1,4 +1,5 @@
 import 'package:attappv1/data/models/session_register/session_register.dart';
+import 'package:attappv1/data/services/api/session_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -23,12 +24,46 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
     }
   }
 
+  void handleSessionUpdate() async {
+    if (await updateSession(widget.sessionRegister)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Session saved successfully.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      Navigator.pop(context, true);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Something went wrong, counldn\'t update the session.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _sessionNameController.text = widget.sessionRegister.sessionName;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Attendance'), actions: [
-        Text(DateFormat.yMMMd('en_US').add_jm().format(widget.sessionRegister.updatedAt))
-      ],),
+      appBar: AppBar(
+        title: Text('Attendance'),
+        actions: [
+          Text(
+            DateFormat.yMMMd(
+              'en_US',
+            ).add_jm().format(widget.sessionRegister.updatedAt),
+          ),
+        ],
+      ),
       body: Container(
         width: double.infinity,
         padding: EdgeInsets.all(16),
@@ -36,22 +71,30 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
           children: [
             TextField(
               controller: _sessionNameController,
+              onSubmitted: (value) => setState(() {
+                widget.sessionRegister.sessionName = _sessionNameController.text
+                    .trim();
+              }),
               decoration: InputDecoration(
                 label: Text('Session name'),
-                border: OutlineInputBorder()
+                border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 20,),
+            SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Present'),
-                Text('${widget.sessionRegister.presentCount}/${widget.sessionRegister.totalCount}'),
+                Text(
+                  '${widget.sessionRegister.presentCount}/${widget.sessionRegister.totalCount}',
+                ),
               ],
             ),
             SizedBox(height: 10),
             LinearProgressIndicator(
-              value: widget.sessionRegister.presentCount / widget.sessionRegister.totalCount,
+              value:
+                  widget.sessionRegister.presentCount /
+                  widget.sessionRegister.totalCount,
               minHeight: 6,
             ),
             SizedBox(height: 20),
@@ -62,7 +105,8 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                     onPressed: () {
                       setState(() {
                         markAllPresent();
-                        widget.sessionRegister.presentCount = widget.sessionRegister.totalCount;
+                        widget.sessionRegister.presentCount =
+                            widget.sessionRegister.totalCount;
                       });
                     },
                     child: Text('Mark All Present'),
@@ -86,7 +130,9 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
-                  children: widget.sessionRegister.attendanceRowMap.values.map((e) {
+                  children: widget.sessionRegister.attendanceRowMap.values.map((
+                    e,
+                  ) {
                     return Column(
                       children: [
                         SwitchListTile(
@@ -104,7 +150,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                           title: Text(e.name),
                           subtitle: Text(e.roll),
                         ),
-                        Divider()
+                        Divider(),
                       ],
                     );
                   }).toList(),
@@ -114,7 +160,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
             SizedBox(height: 10),
             FilledButton(
               onPressed: () {
-                Navigator.pop(context);
+                handleSessionUpdate();
               },
               style: FilledButton.styleFrom(
                 minimumSize: Size(double.infinity, 48),

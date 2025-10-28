@@ -1,6 +1,7 @@
 import 'package:attappv1/data/models/class_model/class_model.dart';
 import 'package:attappv1/data/models/session_model/session_model.dart';
 import 'package:attappv1/data/services/api/session_service.dart';
+import 'package:attappv1/ui/views/pages/mark_attendance_page.dart';
 import 'package:attappv1/ui/views/pages/report_page.dart';
 import 'package:attappv1/ui/views/widgets/session_card.dart';
 import 'package:flutter/material.dart';
@@ -24,10 +25,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
   }
 
   void renderSessions() async {
-    final res = await fetchSessions(
-      widget.classModel.classId,
-      _selectedDay!,
-    );
+    final res = await fetchSessions(widget.classModel.classId, _selectedDay!);
     setState(() {
       _sessionsMap = res;
     });
@@ -35,20 +33,36 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
 
   void handleDeleteSession(int sessionId) async {
     if (await deleteSession(sessionId)) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(
-        content: Text('Session deleted successfully.'),
-        behavior: SnackBarBehavior.floating,
-        ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Session deleted successfully.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
       setState(() {
         _sessionsMap.remove(sessionId);
       });
-    }else{
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Something went wrong, couldn\' delete the session.')));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Something went wrong, couldn\' delete the session.'),
+        ),
+      );
     }
+  }
+
+  void handleSessionUpdate(int sessionId) async {
+    final sessionRegister = await fetchSessionRegister(sessionId);
+    if (sessionRegister == null) return;
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) {
+          return MarkAttendancePage(sessionRegister: sessionRegister);
+        },
+      ),
+    );
+    if (result) renderSessions();
   }
 
   @override
@@ -98,13 +112,19 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16.0),
-              SingleChildScrollView(
-                child: Column(
-                  children: _sessionsMap.values.map((e) {
-                    return SessionCard(session: e, handleDeleteSession: handleDeleteSession,);
-                  }).toList(),
-                ),
-              ),
+              _sessionsMap.isEmpty
+                  ? Center(child: Text("No sessions on ${DateFormat.MMM().format(_selectedDay!)} ${_selectedDay!.day}, ${_selectedDay!.year}"))
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: _sessionsMap.values.map((e) {
+                          return SessionCard(
+                            session: e,
+                            handleDeleteSession: handleDeleteSession,
+                            handleSessionUpdate: handleSessionUpdate,
+                          );
+                        }).toList(),
+                      ),
+                    ),
               SizedBox(height: 10),
 
               // date picker

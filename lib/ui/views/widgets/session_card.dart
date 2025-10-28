@@ -1,14 +1,14 @@
 import 'package:attappv1/data/models/session_model/session_model.dart';
-import 'package:attappv1/data/services/api/session_service.dart';
-import 'package:attappv1/ui/views/pages/mark_attendance_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class SessionCard extends StatefulWidget {
-  const SessionCard({super.key, required this.session, required this.handleDeleteSession});
+  const SessionCard({super.key, required this.session, required this.handleDeleteSession, required this.handleSessionUpdate});
 
   final SessionModel session;
   final dynamic handleDeleteSession;
+  
+  final dynamic handleSessionUpdate;
 
   @override
   State<SessionCard> createState() => _SessionCardState();
@@ -16,16 +16,7 @@ class SessionCard extends StatefulWidget {
 
 class _SessionCardState extends State<SessionCard> {
   void _editSession(int sessionId) async {
-    final sessionRegister = await fetchSessionRegister(sessionId);
-    if (sessionRegister == null) return;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) {
-          return MarkAttendancePage(sessionRegister: sessionRegister);
-        },
-      ),
-    );
+    await widget.handleSessionUpdate(sessionId);
   }
 
   void _deleteSession(int sessionId) async {

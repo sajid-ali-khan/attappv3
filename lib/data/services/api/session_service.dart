@@ -63,3 +63,16 @@ Future<bool> deleteSession(int sessionId) async {
 
   return response.statusCode == 200;
 }
+
+Future<bool> updateSession(SessionRegister sessionRegister) async {
+  final response = await khttp.put(
+    Uri.parse('$baseUrl/sessions'),
+    body: jsonEncode(sessionRegister.toJson())
+  );
+
+  if (response.statusCode == 204){
+    return true;
+  }else{
+    return false;
+  }
+}
