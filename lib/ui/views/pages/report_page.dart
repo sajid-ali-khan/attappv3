@@ -63,7 +63,7 @@ class _ReportPageState extends State<ReportPage> {
             Expanded(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Container(child: ReportWidget(report: Constants.report)),
+                child: ReportWidget(report: Constants.report),
               ),
             ),
           ],

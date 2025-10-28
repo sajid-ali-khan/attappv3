@@ -1,27 +1,25 @@
-import 'package:attappv1/data/constants.dart';
-import 'package:attappv1/data/models/session_model/session_model.dart';
+import 'package:attappv1/data/models/session_register/session_register.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class MarkAttendancePage extends StatefulWidget {
-  const MarkAttendancePage({super.key, required this.session});
-  final SessionModel session;
+  const MarkAttendancePage({super.key, required this.sessionRegister});
+  final SessionRegister sessionRegister;
   @override
   State<MarkAttendancePage> createState() => _MarkAttendancePageState();
 }
 
 class _MarkAttendancePageState extends State<MarkAttendancePage> {
-  int _presentCount = 0;
   final _sessionNameController = TextEditingController();
   void markAllPresent() {
-    for (var s in Constants.attendanceList) {
-      s.present = true;
+    for (var key in widget.sessionRegister.attendanceRowMap.keys) {
+      widget.sessionRegister.attendanceRowMap[key]?.status = true;
     }
   }
 
   void markAllAbsent() {
-    for (var s in Constants.attendanceList) {
-      s.present = false;
+    for (var key in widget.sessionRegister.attendanceRowMap.keys) {
+      widget.sessionRegister.attendanceRowMap[key]?.status = false;
     }
   }
 
@@ -29,7 +27,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Attendance'), actions: [
-        Text(DateFormat.yMMMd('en_US').add_jm().format(DateTime.now()))
+        Text(DateFormat.yMMMd('en_US').add_jm().format(widget.sessionRegister.updatedAt))
       ],),
       body: Container(
         width: double.infinity,
@@ -48,12 +46,12 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Present'),
-                Text('$_presentCount/${Constants.attendanceList.length}'),
+                Text('${widget.sessionRegister.presentCount}/${widget.sessionRegister.totalCount}'),
               ],
             ),
             SizedBox(height: 10),
             LinearProgressIndicator(
-              value: _presentCount / Constants.attendanceList.length,
+              value: widget.sessionRegister.presentCount / widget.sessionRegister.totalCount,
               minHeight: 6,
             ),
             SizedBox(height: 20),
@@ -64,7 +62,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                     onPressed: () {
                       setState(() {
                         markAllPresent();
-                        _presentCount = Constants.attendanceList.length;
+                        widget.sessionRegister.presentCount = widget.sessionRegister.totalCount;
                       });
                     },
                     child: Text('Mark All Present'),
@@ -76,7 +74,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                     onPressed: () {
                       setState(() {
                         markAllAbsent();
-                        _presentCount = 0;
+                        widget.sessionRegister.presentCount = 0;
                       });
                     },
                     child: Text('Mark All Absent'),
@@ -88,23 +86,23 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
-                  children: Constants.attendanceList.map((e) {
+                  children: widget.sessionRegister.attendanceRowMap.values.map((e) {
                     return Column(
                       children: [
                         SwitchListTile(
-                          value: e.present,
+                          value: e.status,
                           onChanged: (bool val) {
                             setState(() {
-                              e.present = val;
+                              e.status = val;
                               if (val) {
-                                _presentCount += 1;
+                                widget.sessionRegister.presentCount += 1;
                               } else {
-                                _presentCount -= 1;
+                                widget.sessionRegister.presentCount -= 1;
                               }
                             });
                           },
-                          title: Text(e.student.name),
-                          subtitle: Text(e.student.roll),
+                          title: Text(e.name),
+                          subtitle: Text(e.roll),
                         ),
                         Divider()
                       ],

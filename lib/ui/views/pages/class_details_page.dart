@@ -1,7 +1,6 @@
 import 'package:attappv1/data/models/class_model/class_model.dart';
 import 'package:attappv1/data/models/session_model/session_model.dart';
 import 'package:attappv1/data/services/api/session_service.dart';
-import 'package:attappv1/ui/views/pages/mark_attendance_page.dart';
 import 'package:attappv1/ui/views/pages/report_page.dart';
 import 'package:attappv1/ui/views/widgets/session_card.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +16,7 @@ class ClassDetailsPage extends StatefulWidget {
 
 class _ClassDetailsPageState extends State<ClassDetailsPage> {
   DateTime? _selectedDay = DateTime.now();
-  List<SessionModel> _sessions = [];
-
+  Map<int, SessionModel> _sessionsMap = {};
   @override
   void initState() {
     super.initState();
@@ -26,13 +24,31 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
   }
 
   void renderSessions() async {
-    final sessions = await fetchSessions(
+    final res = await fetchSessions(
       widget.classModel.classId,
       _selectedDay!,
     );
     setState(() {
-      _sessions = sessions;
+      _sessionsMap = res;
     });
+  }
+
+  void handleDeleteSession(int sessionId) async {
+    if (await deleteSession(sessionId)) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(
+        content: Text('Session deleted successfully.'),
+        behavior: SnackBarBehavior.floating,
+        ));
+      setState(() {
+        _sessionsMap.remove(sessionId);
+      });
+    }else{
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Something went wrong, couldn\' delete the session.')));
+    }
   }
 
   @override
@@ -45,26 +61,12 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // buttons
               Row(
                 children: [
                   Expanded(
                     child: FilledButton.icon(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              // create a new session by calling the api
-                              SessionModel sessionModel = SessionModel(
-                                sessionId: 0,
-                                sessionName: "Untitled",
-                                updatedAt: DateTime.now(),
-                              );
-                              return MarkAttendancePage(session: sessionModel);
-                            },
-                          ),
-                        );
-                      },
+                      onPressed: () {},
                       label: Text('New Session'),
                       icon: Icon(Icons.add),
                     ),
@@ -89,6 +91,8 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                 ],
               ),
               SizedBox(height: 24),
+
+              // session list
               Text(
                 'Sessions for ${DateFormat.MMM().format(_selectedDay!)} ${_selectedDay!.day}, ${_selectedDay!.year}',
                 style: TextStyle(fontSize: 16),
@@ -96,15 +100,17 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
               SizedBox(height: 16.0),
               SingleChildScrollView(
                 child: Column(
-                  children: _sessions.map((e) {
-                    return SessionCard(session: e);
+                  children: _sessionsMap.values.map((e) {
+                    return SessionCard(session: e, handleDeleteSession: handleDeleteSession,);
                   }).toList(),
                 ),
               ),
               SizedBox(height: 10),
+
+              // date picker
               Text('Select a Date', style: TextStyle(fontSize: 16)),
               SizedBox(height: 10),
-              
+
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
@@ -115,13 +121,12 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                   firstDate: DateTime(
                     2000,
                   ), // Define your earliest allowable date
-                  lastDate: DateTime(
-                    2050,
-                  ), // Define your latest allowable date
+                  lastDate: DateTime(2050), // Define your latest allowable date
                   onDateChanged: (DateTime newDate) {
                     setState(() {
                       _selectedDay = newDate;
                     });
+                    renderSessions();
                   },
                 ),
               ),
