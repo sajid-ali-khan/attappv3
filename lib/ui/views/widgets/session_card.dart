@@ -1,5 +1,4 @@
-import 'package:attappv1/data/constants.dart';
-import 'package:attappv1/data/models/session_model.dart';
+import 'package:attappv1/data/models/session_model/session_model.dart';
 import 'package:attappv1/ui/views/pages/mark_attendance_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -23,7 +22,7 @@ class SessionCard extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return MarkAttendancePage(attendanceList: Constants.attendanceList);
+                  return MarkAttendancePage(session: session);
                 },
               ),
             );

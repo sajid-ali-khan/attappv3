@@ -1,24 +1,26 @@
-import 'package:attappv1/data/models/attendance_row.dart';
+import 'package:attappv1/data/constants.dart';
+import 'package:attappv1/data/models/session_model/session_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class MarkAttendancePage extends StatefulWidget {
-  const MarkAttendancePage({super.key, required this.attendanceList});
-  final List<AttendanceRow> attendanceList;
+  const MarkAttendancePage({super.key, required this.session});
+  final SessionModel session;
   @override
   State<MarkAttendancePage> createState() => _MarkAttendancePageState();
 }
 
 class _MarkAttendancePageState extends State<MarkAttendancePage> {
   int _presentCount = 0;
+  final _sessionNameController = TextEditingController();
   void markAllPresent() {
-    for (var s in widget.attendanceList) {
+    for (var s in Constants.attendanceList) {
       s.present = true;
     }
   }
 
   void markAllAbsent() {
-    for (var s in widget.attendanceList) {
+    for (var s in Constants.attendanceList) {
       s.present = false;
     }
   }
@@ -34,19 +36,27 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
+            TextField(
+              controller: _sessionNameController,
+              decoration: InputDecoration(
+                label: Text('Session name'),
+                border: OutlineInputBorder()
+              ),
+            ),
+            SizedBox(height: 20,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Present'),
-                Text('$_presentCount/${widget.attendanceList.length}'),
+                Text('$_presentCount/${Constants.attendanceList.length}'),
               ],
             ),
             SizedBox(height: 10),
             LinearProgressIndicator(
-              value: _presentCount / widget.attendanceList.length,
+              value: _presentCount / Constants.attendanceList.length,
               minHeight: 6,
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 20),
             Row(
               children: [
                 Expanded(
@@ -54,7 +64,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                     onPressed: () {
                       setState(() {
                         markAllPresent();
-                        _presentCount = widget.attendanceList.length;
+                        _presentCount = Constants.attendanceList.length;
                       });
                     },
                     child: Text('Mark All Present'),
@@ -78,7 +88,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
-                  children: widget.attendanceList.map((e) {
+                  children: Constants.attendanceList.map((e) {
                     return Column(
                       children: [
                         SwitchListTile(

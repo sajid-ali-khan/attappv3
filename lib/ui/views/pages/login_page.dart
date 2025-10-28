@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:attappv1/data/models/login_request/login_request.dart';
-import 'package:attappv1/data/services/auth_service.dart';
+import 'package:attappv1/data/services/api/auth_service.dart';
 import 'package:attappv1/ui/views/pages/dashboard_page.dart';
 import 'package:flutter/material.dart';
 

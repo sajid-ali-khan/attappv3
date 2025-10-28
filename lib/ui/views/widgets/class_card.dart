@@ -22,7 +22,7 @@ class ClassCard extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) {
                   return ClassDetailsPage(
-                    subjectName: assignedClass.subjectName,
+                    classModel: assignedClass,
                   );
                 },
               ),

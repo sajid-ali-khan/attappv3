@@ -1,7 +1,6 @@
 import 'dart:developer';
 
-import 'package:attappv1/data/constants.dart';
-import 'package:attappv1/data/services/faculty_service.dart';
+import 'package:attappv1/data/services/api/faculty_service.dart';
 import 'package:attappv1/data/services/shared_prefs_service.dart';
 import 'package:attappv1/data/services/token_service.dart';
 import 'package:attappv1/ui/views/pages/login_page.dart';
