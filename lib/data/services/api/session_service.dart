@@ -14,12 +14,8 @@ Future<SessionModel?> createNewSession(int courseId) async {
   String? username = await getUsername();
   if (username == null) return null;
 
-  Map<String, dynamic> queryParams = {
-    "courseId": courseId,
-    "facultyCode": username,
-  };
   final response = await khttp.post(
-    Uri.http(baseUrlAddress, '/api/sessions', queryParams),
+    Uri.parse('$baseUrl/sessions?courseId=$courseId&facultyCode=$username')
   );
 
   if (response.statusCode == 200) {

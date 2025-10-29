@@ -31,6 +31,22 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
     });
   }
 
+  void handleCreateNewSession() async {
+    final res = await createNewSession(widget.classModel.classId);
+    if (res == null) {
+      showMySnackbar('Something went wrong, couldn\'t create a session.');
+    }else{
+      showMySnackbar('Session created.');
+      handleEditSession(res.sessionId);
+    }
+  }
+
+  showMySnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+    );
+  }
+
   void handleDeleteSession(int sessionId) async {
     if (await deleteSession(sessionId)) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -51,7 +67,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
     }
   }
 
-  void handleSessionUpdate(int sessionId) async {
+  void handleEditSession(int sessionId) async {
     final sessionRegister = await fetchSessionRegister(sessionId);
     if (sessionRegister == null) return;
     final result = await Navigator.push(
@@ -62,7 +78,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
         },
       ),
     );
-    if (result) renderSessions();
+    if (result != null && result) renderSessions();
   }
 
   @override
@@ -80,7 +96,9 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                 children: [
                   Expanded(
                     child: FilledButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        handleCreateNewSession();
+                      },
                       label: Text('New Session'),
                       icon: Icon(Icons.add),
                     ),
@@ -113,14 +131,18 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
               ),
               SizedBox(height: 16.0),
               _sessionsMap.isEmpty
-                  ? Center(child: Text("No sessions on ${DateFormat.MMM().format(_selectedDay!)} ${_selectedDay!.day}, ${_selectedDay!.year}"))
+                  ? Center(
+                      child: Text(
+                        "No sessions on ${DateFormat.MMM().format(_selectedDay!)} ${_selectedDay!.day}, ${_selectedDay!.year}",
+                      ),
+                    )
                   : SingleChildScrollView(
                       child: Column(
                         children: _sessionsMap.values.map((e) {
                           return SessionCard(
                             session: e,
                             handleDeleteSession: handleDeleteSession,
-                            handleSessionUpdate: handleSessionUpdate,
+                            handleEditSession: handleEditSession,
                           );
                         }).toList(),
                       ),

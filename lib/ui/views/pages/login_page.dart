@@ -83,6 +83,12 @@ class _LoginPageState extends State<LoginPage> {
                       else
                         {
                           log('login success'),
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Login successful.'),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          ),
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(

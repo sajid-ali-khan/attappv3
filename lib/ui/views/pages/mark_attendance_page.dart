@@ -71,7 +71,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
           children: [
             TextField(
               controller: _sessionNameController,
-              onSubmitted: (value) => setState(() {
+              onChanged: (value) => setState(() {
                 widget.sessionRegister.sessionName = _sessionNameController.text
                     .trim();
               }),
