@@ -32,7 +32,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
           behavior: SnackBarBehavior.floating,
         ),
       );
-      Navigator.pop(context, true);
+      Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

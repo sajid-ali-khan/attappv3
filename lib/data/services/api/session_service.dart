@@ -28,7 +28,7 @@ Future<SessionModel?> createNewSession(int courseId) async {
 Future<Map<int, SessionModel>> fetchSessions(int classId, DateTime date) async {
   final response = await khttp.get(
     Uri.parse(
-      '$baseUrl/sessions?courseId=$classId&date=${DateFormat('y-M-d').format(date)}',
+      '$baseUrl/sessions?courseId=$classId&date=${DateFormat('yyyy-MM-dd').format(date)}',
     ),
   );
   if (response.statusCode == 200) {

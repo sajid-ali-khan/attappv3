@@ -1,7 +1,10 @@
-import 'package:attappv1/ui/views/pages/login_page.dart';
+import 'package:attappv1/ui/views/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl_standalone.dart';
 
-void main() {
+Future<void> main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await findSystemLocale();
   runApp(const MyApp());
 }
 
@@ -13,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
-      home: LoginPage()
+      home: SplashScreen()
     );
   }
 }

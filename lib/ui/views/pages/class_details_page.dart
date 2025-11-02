@@ -1,5 +1,6 @@
 import 'package:attappv1/data/models/class_model/class_model.dart';
 import 'package:attappv1/data/models/session_model/session_model.dart';
+import 'package:attappv1/data/services/api/attendance_report_service.dart';
 import 'package:attappv1/data/services/api/session_service.dart';
 import 'package:attappv1/ui/views/pages/mark_attendance_page.dart';
 import 'package:attappv1/ui/views/pages/report_page.dart';
@@ -70,7 +71,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
   void handleEditSession(int sessionId) async {
     final sessionRegister = await fetchSessionRegister(sessionId);
     if (sessionRegister == null) return;
-    final result = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) {
@@ -78,7 +79,18 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
         },
       ),
     );
-    if (result != null && result) renderSessions();
+    renderSessions();
+  }
+
+  void getAttendanceReport() async{
+    try {
+      final attendanceReport = await fetchFullAttendanceReport(widget.classModel.classId);
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return ReportPage(attendanceReport: attendanceReport, classModel: widget.classModel);
+      },));
+    }catch(e){
+      showMySnackbar("Couldn't fetch attendance report");
+    }
   }
 
   @override
@@ -107,14 +119,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return ReportPage();
-                            },
-                          ),
-                        );
+                        getAttendanceReport();
                       },
                       label: Text('Report'),
                       icon: Icon(Icons.analytics_outlined),
