@@ -1,9 +1,8 @@
-import 'dart:developer';
-
-import 'package:attappv1/data/models/login_request/login_request.dart';
-import 'package:attappv1/data/services/api/auth_service.dart';
+import 'package:attappv1/ui/viewmodels/auth_provider.dart';
 import 'package:attappv1/ui/views/pages/dashboard_page.dart';
+import 'package:attappv1/ui/views/widgets/shared.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,101 +12,94 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool _obscureText = true;
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    bool obscureText = true;
+    TextEditingController usernameController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
+    final auth = context.watch<AuthProvider>();
+
     return Scaffold(
       appBar: AppBar(),
-      body: SafeArea(
-        child: Container(
-          height: double.infinity,
-          width: double.infinity,
-          padding: EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text('Welcome back!', style: TextStyle(fontSize: 24)),
-              Text('Sign in to manage attendance'),
-              SizedBox(height: 30),
-              TextField(
-                controller: usernameController,
-                keyboardType: TextInputType.numberWithOptions(signed: true),
-                decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
-                  labelText: 'Enter your userId',
-                ),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                controller: passwordController,
-                obscureText: _obscureText,
-                decoration: InputDecoration(
-                  border: const UnderlineInputBorder(),
-                  labelText: 'Enter your password',
-                  suffixIcon: IconButton(
-                    icon: _obscureText
-                        ? const Icon(Icons.visibility)
-                        : const Icon(Icons.visibility_off),
-                    onPressed: () {
-                      setState(() {
-                        _obscureText =
-                            !_obscureText; // Toggle password visibility
-                      });
-                    },
+      extendBodyBehindAppBar: true,
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        padding: EdgeInsets.all(32),
+        child: Column(
+          spacing: 24,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+
+          children: [
+            Column(
+              spacing: 10,
+              children: [
+                Text('Welcome back!', style: TextStyle(fontSize: 24)),
+                Text('Sign in to manage attendance'),
+              ],
+            ),
+            Column(
+              spacing: 16,
+              children: [
+                TextField(
+                  controller: usernameController,
+                  keyboardType: TextInputType.numberWithOptions(signed: true),
+                  decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Enter your userId',
                   ),
                 ),
-              ),
-              SizedBox(height: 30),
-              FilledButton(
-                onPressed: () async {
-                  String username = usernameController.text.trim();
-                  String password = passwordController.text.trim();
 
-                  log('username: $username, password: $password');
-
-                  if (username == '' || password == '') {
-                    return;
-                  }
-
-                  LoginRequest loginRequest = LoginRequest(
-                    username: username,
-                    password: password,
-                  );
-                  await loginUser(loginRequest).then(
-                    (value) => {
-                      if (value == null)
-                        {log('login failed.')}
-                      else
-                        {
-                          log('login success'),
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Login successful.'),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          ),
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return DashboardPage();
-                              },
-                            ),
-                          ),
-                        },
-                    },
-                  );
-                },
-                style: FilledButton.styleFrom(
-                  minimumSize: Size(double.infinity, 48),
+                TextField(
+                  controller: passwordController,
+                  obscureText: obscureText,
+                  decoration: InputDecoration(
+                    border: const UnderlineInputBorder(),
+                    labelText: 'Enter your password',
+                    suffixIcon: IconButton(
+                      icon: obscureText
+                          ? const Icon(Icons.visibility)
+                          : const Icon(Icons.visibility_off),
+                      onPressed: () {
+                        setState(() {
+                          obscureText =
+                              !obscureText; // Toggle password visibility
+                        });
+                      },
+                    ),
+                  ),
                 ),
-                child: Text('Login'),
-              ),
-            ],
-          ),
+              ],
+            ),
+            auth.isLoading
+                ? const CircularProgressIndicator()
+                : FilledButton(
+                    onPressed: () async {
+                      await context.read<AuthProvider>().login(
+                        usernameController.text.trim(),
+                        passwordController.text.trim(),
+                      );
+
+                      if (!context.mounted) return;
+
+                      if (auth.isLoggedIn) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DashboardPage(),
+                          ),
+                        );
+                      } else if (auth.errorMessage != null) {
+                        showMySnackbar(context, auth.errorMessage!);
+                      }
+                    },
+                    style: FilledButton.styleFrom(
+                      minimumSize: Size(double.infinity, 48),
+                    ),
+                    child: Text('Login'),
+                  ),
+          ],
         ),
       ),
     );

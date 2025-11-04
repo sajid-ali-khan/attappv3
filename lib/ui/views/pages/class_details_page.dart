@@ -5,6 +5,7 @@ import 'package:attappv1/data/services/api/session_service.dart';
 import 'package:attappv1/ui/views/pages/mark_attendance_page.dart';
 import 'package:attappv1/ui/views/pages/report_page.dart';
 import 'package:attappv1/ui/views/widgets/session_card.dart';
+import 'package:attappv1/ui/views/widgets/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -34,18 +35,13 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
 
   void handleCreateNewSession() async {
     final res = await createNewSession(widget.classModel.classId);
+    if (!mounted) return;
     if (res == null) {
-      showMySnackbar('Something went wrong, couldn\'t create a session.');
+      showMySnackbar(context, 'Something went wrong, couldn\'t create a session.');
     }else{
-      showMySnackbar('Session created.');
+      showMySnackbar(context, 'Session created.');
       handleEditSession(res.sessionId);
     }
-  }
-
-  showMySnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
-    );
   }
 
   void handleDeleteSession(int sessionId) async {
@@ -89,7 +85,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
         return ReportPage(attendanceReport: attendanceReport, classModel: widget.classModel);
       },));
     }catch(e){
-      showMySnackbar("Couldn't fetch attendance report");
+      showMySnackbar(context, "Couldn't fetch attendance report");
     }
   }
 

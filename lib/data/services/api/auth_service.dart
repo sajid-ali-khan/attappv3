@@ -10,21 +10,26 @@ import 'package:attappv1/data/services/token_service.dart';
 final AuthHttpClient khttp = AuthHttpClient();
 final TokenService _tokenService = TokenService();
 
-Future<JwtResponse?> loginUser(LoginRequest loginRequest) async {
-  final response = await khttp.post(
-    Uri.parse('$baseUrl/auth/login'),
-    body: jsonEncode(loginRequest.toJson()),
-  );
+Future<Map<String, dynamic>> loginUser(LoginRequest loginRequest) async {
+  try {
+    final response = await khttp.post(
+      Uri.parse('$baseUrl/auth/login'),
+      body: jsonEncode(loginRequest.toJson()),
+    );
 
-  if (response.statusCode == 200) {
-    log('Success. ${response.body}');
-    final jwtResponse =  JwtResponse.fromJson(jsonDecode(response.body));
+    if (response.statusCode == 200) {
+      final jwtResponse = JwtResponse.fromJson(jsonDecode(response.body));
 
-    await _tokenService.saveToken(jwtResponse.token);
-    await saveUsername(jwtResponse.username);
-    return jwtResponse;
-  } else {
-    log('Failed. ${response.body}');
-    return null;
+      await _tokenService.saveToken(jwtResponse.token);
+      await saveUsername(jwtResponse.username);
+      return {'success': true};
+    } else {
+      log('Login failed: ${response.body}');
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    }
+  } catch (e, stack) {
+    log('Error logging in: $e\n$stack');
+    return {'success': false, 'message': 'Something went wrong.'};
   }
 }
+
