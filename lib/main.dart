@@ -1,4 +1,6 @@
 import 'package:attappv1/ui/viewmodels/auth_provider.dart';
+import 'package:attappv1/ui/viewmodels/classes_provider.dart';
+import 'package:attappv1/ui/viewmodels/session_provider.dart';
 import 'package:attappv1/ui/views/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl_standalone.dart';
@@ -9,7 +11,11 @@ Future<void> main() async {
   await findSystemLocale();
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => AuthProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => ClassesProvider()),
+        ChangeNotifierProvider(create: (_) => SessionProvider())
+      ],
       child: const MyApp(),
     ),
   );

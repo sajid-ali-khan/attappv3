@@ -12,22 +12,23 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool _obscureText = true;
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    bool obscureText = true;
-    TextEditingController usernameController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
     final auth = context.watch<AuthProvider>();
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(backgroundColor: Colors.white),
+      backgroundColor: Colors.white,
       extendBodyBehindAppBar: true,
       body: Container(
         height: double.infinity,
         width: double.infinity,
         padding: EdgeInsets.all(32),
         child: Column(
-          spacing: 24,
+          spacing: 32,
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
 
@@ -35,15 +36,15 @@ class _LoginPageState extends State<LoginPage> {
             Column(
               spacing: 10,
               children: [
-                Text('Welcome back!', style: TextStyle(fontSize: 24)),
-                Text('Sign in to manage attendance'),
+                Text('Login', style: TextStyle(fontSize: 24)),
+                Text('to continue to Attendance Management'),
               ],
             ),
             Column(
               spacing: 16,
               children: [
                 TextField(
-                  controller: usernameController,
+                  controller: _usernameController,
                   keyboardType: TextInputType.numberWithOptions(signed: true),
                   decoration: const InputDecoration(
                     border: UnderlineInputBorder(),
@@ -52,19 +53,18 @@ class _LoginPageState extends State<LoginPage> {
                 ),
 
                 TextField(
-                  controller: passwordController,
-                  obscureText: obscureText,
+                  controller: _passwordController,
+                  obscureText: _obscureText,
                   decoration: InputDecoration(
                     border: const UnderlineInputBorder(),
                     labelText: 'Enter your password',
                     suffixIcon: IconButton(
-                      icon: obscureText
+                      icon: _obscureText
                           ? const Icon(Icons.visibility)
                           : const Icon(Icons.visibility_off),
                       onPressed: () {
                         setState(() {
-                          obscureText =
-                              !obscureText; // Toggle password visibility
+                          _obscureText = !_obscureText; // Toggle password visibility
                         });
                       },
                     ),
@@ -76,9 +76,18 @@ class _LoginPageState extends State<LoginPage> {
                 ? const CircularProgressIndicator()
                 : FilledButton(
                     onPressed: () async {
+                      if (_usernameController.text.trim() == '' ||
+                          _passwordController.text.trim() == '') {
+                        if (!context.mounted) return;
+                        showMySnackbar(
+                          context,
+                          'Please enter both userId and password.',
+                        );
+                        return;
+                      }
                       await context.read<AuthProvider>().login(
-                        usernameController.text.trim(),
-                        passwordController.text.trim(),
+                        _usernameController.text.trim(),
+                        _passwordController.text.trim(),
                       );
 
                       if (!context.mounted) return;

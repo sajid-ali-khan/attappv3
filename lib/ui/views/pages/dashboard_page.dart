@@ -1,11 +1,11 @@
-import 'dart:developer';
-
 import 'package:attappv1/data/services/api/faculty_service.dart';
 import 'package:attappv1/data/services/shared_prefs_service.dart';
 import 'package:attappv1/data/services/token_service.dart';
+import 'package:attappv1/ui/viewmodels/classes_provider.dart';
 import 'package:attappv1/ui/views/pages/login_page.dart';
 import 'package:attappv1/ui/views/widgets/class_card.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -16,72 +16,69 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   String facultyName = '';
-  List<dynamic> classes = [];
+  final _tokenService = TokenService();
+
   @override
   void initState() {
     super.initState();
     fetchFacultyName();
-    fetchFacultyClasses();
-  }
-
-  void fetchFacultyClasses() async {
-    final kclasses = await getFacultyClasses();
-    setState((){
-      classes = kclasses;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ClassesProvider>().getClasses();
     });
   }
 
   void fetchFacultyName() async {
-    String? fname = await getSharedPrefs("facultyName");
-    if (fname == null) {
-      fname = await getFacultyName();
-      if (fname == null) return;
-    }
-    log('Obtained faculty name: $fname');
-    setState(() {
-      facultyName = fname!;
-    });
+    String? fname =
+        await getSharedPrefs("facultyName") ?? await getFacultyName();
+    if (fname == null) return;
+    setState(() => facultyName = fname);
   }
-  final _tokenService = TokenService();
+
+  void _handleLogout() async {
+    await _tokenService.deleteToken();
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final classes = context.watch<ClassesProvider>();
+
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Dashboard'),
+        backgroundColor: Colors.white,
+        title: Text('Attendance Management'),
         actions: [
-          IconButton(
-            onPressed: () async {
-              await _tokenService.deleteToken();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return LoginPage();
-                  },
-                ),
-              );
-            },
-            icon: Icon(Icons.logout),
-          ),
+          IconButton(onPressed: _handleLogout, icon: Icon(Icons.logout))
         ],
       ),
-      body: Container(
-        padding: EdgeInsets.all(16),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: Column(
+          spacing: 4,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Welcome back,'),
-            Text(facultyName, style: TextStyle(fontSize: 24)),
-            SizedBox(height: 20),
+            Text('My Classes', style: const TextStyle(fontSize: 20)),
             Text(
-              'Your Classes',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+              'Welcome back, $facultyName',
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
             ),
-            SizedBox(height: 20),
-            Column(
-              children: classes.map((e) {
-                return ClassCard(assignedClass: e);
-              }).toList(),
+            const SizedBox(height: 24),
+            Expanded(
+              child: classes.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : classes.success
+                  ? ListView.builder(
+                      itemCount: classes.classes.length,
+                      itemBuilder: (context, index) {
+                        return ClassCard(assignedClass: classes.classes[index]);
+                      },
+                    )
+                  : const Center(child: Text('No classes assigned to you')),
             ),
           ],
         ),

@@ -1,7 +1,9 @@
 import 'package:attappv1/data/models/session_register/session_register.dart';
-import 'package:attappv1/data/services/api/session_service.dart';
+import 'package:attappv1/ui/viewmodels/session_provider.dart';
+import 'package:attappv1/ui/views/widgets/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class MarkAttendancePage extends StatefulWidget {
   const MarkAttendancePage({super.key, required this.sessionRegister});
@@ -24,22 +26,18 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
     }
   }
 
-  void handleSessionUpdate() async {
-    if (await updateSession(widget.sessionRegister)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Session saved successfully.'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+  void _handleSessionUpdate() async {
+    final sessionVm = context.read<SessionProvider>();
+
+    await sessionVm.updateSessionRegister(widget.sessionRegister);
+
+    if (!mounted) return;
+
+    if (sessionVm.updated) {
+      showMySnackbar(context, 'Session saved successfully');
       Navigator.pop(context);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Something went wrong, counldn\'t update the session.'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showMySnackbar(context, sessionVm.errorMessage);
     }
   }
 
@@ -159,13 +157,22 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
             ),
             SizedBox(height: 10),
             FilledButton(
-              onPressed: () {
-                handleSessionUpdate();
-              },
+              onPressed: context.watch<SessionProvider>().isUpdating
+                  ? null
+                  : _handleSessionUpdate,
               style: FilledButton.styleFrom(
-                minimumSize: Size(double.infinity, 48),
+                minimumSize: const Size(double.infinity, 48),
               ),
-              child: Text('Save'),
+              child: context.watch<SessionProvider>().isUpdating
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Text('Save'),
             ),
           ],
         ),
