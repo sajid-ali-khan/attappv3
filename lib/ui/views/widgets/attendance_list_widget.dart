@@ -89,10 +89,10 @@ class AttendanceListWidget extends StatelessWidget {
             ),
 
             // List rows
-            data.isEmpty
-                ? Center(child: Text('No data'))
-                : Expanded(
-                    child: SingleChildScrollView(
+            Expanded(
+              child: data.isEmpty
+                  ? Center(child: Text('No report available.'))
+                  : SingleChildScrollView(
                       child: Column(
                         children: [
                           ...data.map((student) {
@@ -240,7 +240,7 @@ class AttendanceListWidget extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ),
+            ),
           ],
         ),
       ),

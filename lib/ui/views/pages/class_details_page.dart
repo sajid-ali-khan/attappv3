@@ -1,7 +1,7 @@
 import 'package:attappv1/data/models/class_model/class_model.dart';
 // ignore: unused_import
 import 'package:attappv1/data/models/session_model/session_model.dart';
-import 'package:attappv1/data/services/api/attendance_report_service.dart';
+import 'package:attappv1/ui/viewmodels/report_provider.dart';
 import 'package:attappv1/ui/viewmodels/session_provider.dart';
 import 'package:attappv1/ui/views/pages/mark_attendance_page.dart';
 import 'package:attappv1/ui/views/pages/report_page.dart';
@@ -92,32 +92,24 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
     );
   }
 
-  void getAttendanceReport() async {
-    try {
-      final attendanceReport = await fetchFullAttendanceReport(
-        widget.classModel.classId,
-      );
-      if (!mounted) return;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) {
-            return ReportPage(
-              attendanceReport: attendanceReport,
-              classModel: widget.classModel,
-            );
-          },
-        ),
-      );
-    } catch (e) {
-      showMySnackbar(context, "Couldn't fetch attendance report");
-    }
+  void _getAttendanceReport() async {
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return ReportPage(
+            classModel: widget.classModel,
+          );
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final sessionVm = context.watch<SessionProvider>();
-
+    final reportVm = context.watch<ReportProvider>();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppbar2(
@@ -140,8 +132,8 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                       onPressed: _handleCreateSession,
                       label: sessionVm.isCreating
                           ? const SizedBox(
-                              width: 16,
-                              height: 16,
+                              width: 18,
+                              height: 18,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 color: Colors.white,
@@ -155,11 +147,11 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                   ),
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: () {
-                        getAttendanceReport();
-                      },
-                      label: Text('Report'),
-                      icon: Icon(Icons.analytics_outlined),
+                      onPressed: reportVm.isLoading ? null : _getAttendanceReport,
+                      label: reportVm.isLoading? const SizedBox(
+                        width: 20, height: 20, child: CircularProgressIndicator(),
+                      ): Text('View Report'),
+                      icon: reportVm.isLoading? const SizedBox() : Icon(Icons.analytics_outlined),
                     ),
                   ),
                 ],
