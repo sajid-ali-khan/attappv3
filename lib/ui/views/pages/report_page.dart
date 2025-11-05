@@ -1,16 +1,21 @@
 import 'package:attappv1/data/models/attendance_report/attendance_report.dart';
 import 'package:attappv1/data/models/class_model/class_model.dart';
 import 'package:attappv1/data/services/api/attendance_report_service.dart';
-import 'package:attappv1/ui/views/widgets/report_widget.dart';
+import 'package:attappv1/ui/views/widgets/attendance_list_widget.dart';
+import 'package:attappv1/ui/views/widgets/custom_appbar2.dart';
 import 'package:flutter/material.dart';
 import 'package:date_field/date_field.dart';
 
 class ReportPage extends StatefulWidget {
   final AttendanceReport attendanceReport;
-  
+
   final ClassModel classModel;
 
-  const ReportPage({super.key, required this.attendanceReport, required this.classModel});
+  const ReportPage({
+    super.key,
+    required this.attendanceReport,
+    required this.classModel,
+  });
 
   @override
   State<ReportPage> createState() => _ReportPageState();
@@ -63,9 +68,12 @@ class _ReportPageState extends State<ReportPage> {
 
   Future<void> _refreshData() async {
     if (_selectedStartDate == null || _selectedEndDate == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Select both dates first"), behavior: SnackBarBehavior.floating,));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Select both dates first"),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
       return;
     }
 
@@ -86,58 +94,79 @@ class _ReportPageState extends State<ReportPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Attendance Report')),
+      backgroundColor: Colors.white,
+      appBar: CustomAppbar2(
+        title: 'Attendance Report',
+        subTitle:
+            '${widget.classModel.className} - ${widget.classModel.subjectName}',
+      ),
       body: Container(
         width: double.infinity,
-        padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         child: Column(
+          spacing: 20,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            Column(
+              spacing: 12,
               children: [
-                Expanded(
-                  child: DateTimeFormField(
-                    mode: DateTimeFieldPickerMode.date,
-                    decoration: const InputDecoration(labelText: 'From'),
-                    firstDate: DateTime(2023),
-                    lastDate: DateTime.now(),
-                    onChanged: (value) => _selectedStartDate = value,
-                  ),
+                Row(
+                  spacing: 16,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: DateTimeFormField(
+                        mode: DateTimeFieldPickerMode.date,
+                        decoration: const InputDecoration(
+                          labelText: 'From',
+                        ),
+                        firstDate: DateTime(2023),
+                        lastDate: DateTime.now(),
+                        onChanged: (value) => setState(() {
+                          _selectedStartDate = value;
+                        }),
+                      ),
+                    ),
+                    Expanded(
+                      child: DateTimeFormField(
+                        mode: DateTimeFieldPickerMode.date,
+                        decoration: const InputDecoration(
+                          labelText: 'To',
+                        ),
+                        firstDate: DateTime(2023),
+                        lastDate: DateTime.now(),
+                        onChanged: (value) => setState(() {
+                          _selectedEndDate = value;
+                        }),
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 20),
-                Expanded(
-                  child: DateTimeFormField(
-                    mode: DateTimeFieldPickerMode.date,
-                    decoration: const InputDecoration(labelText: 'To'),
-                    firstDate: DateTime(2023),
-                    lastDate: DateTime.now(),
-                    onChanged: (value) => _selectedEndDate = value,
+
+                // Refresh button
+                OutlinedButton.icon(
+                  onPressed: (_selectedStartDate == null || _selectedEndDate == null) ? null : _refreshData,
+                  label: Text('Apply'),
+                  icon: Icon(Icons.refresh),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: Size(double.infinity, 42),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 12),
-
-            // Refresh button
-            OutlinedButton.icon(
-              onPressed: _refreshData,
-              label: Text('Apply'),
-              icon: Icon(Icons.refresh),
-              style: OutlinedButton.styleFrom(
-                minimumSize: Size(double.infinity, 42),
-              ),
-            ),
-
-            SizedBox(height: 12),
 
             Wrap(
               spacing: 8.0,
               runSpacing: 4.0,
               children: [
                 // Sort Chip
-                FilterChip(
-                  label: Text('Sort by %'),
-                  avatar: Icon(Icons.sort, size: 18),
+                InputChip(
+                  backgroundColor: Colors.indigo.shade50,
+                  label: Row(
+                    spacing: 4,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [Icon(Icons.sort, size: 16), Text('Sort by %')],
+                  ),
                   selected: _sortByAttendance,
                   onSelected: (bool selected) {
                     setState(() {
@@ -148,6 +177,7 @@ class _ReportPageState extends State<ReportPage> {
                 ),
 
                 FilterChip(
+                  backgroundColor: Colors.indigo.shade50,
                   label: Text('Below 75%'),
                   selected: _below75,
                   onSelected: (bool selected) {
@@ -156,6 +186,7 @@ class _ReportPageState extends State<ReportPage> {
                   },
                 ),
                 FilterChip(
+                  backgroundColor: Colors.indigo.shade50,
                   label: Text('Below 65%'),
                   selected: _below65,
                   onSelected: (bool selected) {
@@ -166,12 +197,9 @@ class _ReportPageState extends State<ReportPage> {
               ],
             ),
 
-            SizedBox(height: 12),
-
             Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: ReportWidget(report: _currentReport),
+              child: AttendanceListWidget(
+                data: _currentReport.studentAttendanceMap.values.toList(),
               ),
             ),
           ],

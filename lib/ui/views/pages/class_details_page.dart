@@ -69,7 +69,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
     if (!mounted) return;
 
     if (sessionVm.fetched) {
-      Navigator.push(
+      await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) {
@@ -83,6 +83,8 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
       if (!mounted) return;
       showMySnackbar(context, sessionVm.errorMessage);
     }
+
+    if (!mounted) return;
 
     await context.read<SessionProvider>().getSessionsByDate(
       widget.classModel.classId,

@@ -21,7 +21,7 @@ class ReportWidget extends StatelessWidget {
           return Card(
             margin: EdgeInsets.zero,
             elevation: 0.0,
-            color: Colors.deepPurple[50],
+            color: Colors.indigo[50],
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(4),
             ),
