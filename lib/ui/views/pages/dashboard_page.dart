@@ -53,26 +53,45 @@ class _DashboardPageState extends State<DashboardPage> {
         backgroundColor: Colors.white,
         title: Text('Attendance Management'),
         actions: [
-          IconButton(onPressed: _handleLogout, icon: Icon(Icons.logout))
+          IconButton(onPressed: _handleLogout, icon: Icon(Icons.logout)),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: Column(
-          spacing: 4,
+          spacing: 24,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('My Classes', style: const TextStyle(fontSize: 20)),
-            Text(
-              'Welcome back, $facultyName',
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+            Card(
+              color: Colors.indigo.shade50,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: (){},
+                child: ListTile(
+                  title: Text('Consolidated Attendance Report'),
+                  subtitle: Text('Attendance Report of any class'),
+                ),
+              ),
             ),
-            const SizedBox(height: 24),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('My Classes', style: const TextStyle(fontSize: 20)),
+                Text(
+                  'Welcome back, $facultyName',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
             Expanded(
               child: classes.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : classes.success
-                  ? ListView.builder(
+                  ? ListView.separated(
+                    separatorBuilder: (context, index) => SizedBox(height: 4,),
                       itemCount: classes.classes.length,
                       itemBuilder: (context, index) {
                         return ClassCard(assignedClass: classes.classes[index]);

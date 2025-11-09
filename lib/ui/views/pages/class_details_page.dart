@@ -98,9 +98,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
       context,
       MaterialPageRoute(
         builder: (context) {
-          return ReportPage(
-            classModel: widget.classModel,
-          );
+          return ReportPage(classModel: widget.classModel);
         },
       ),
     );
@@ -147,11 +145,19 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                   ),
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: reportVm.isLoading ? null : _getAttendanceReport,
-                      label: reportVm.isLoading? const SizedBox(
-                        width: 20, height: 20, child: CircularProgressIndicator(),
-                      ): Text('View Report'),
-                      icon: reportVm.isLoading? const SizedBox() : Icon(Icons.analytics_outlined),
+                      onPressed: reportVm.isLoading
+                          ? null
+                          : _getAttendanceReport,
+                      label: reportVm.isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(),
+                            )
+                          : Text('View Report'),
+                      icon: reportVm.isLoading
+                          ? const SizedBox()
+                          : Icon(Icons.analytics_outlined),
                     ),
                   ),
                 ],
@@ -175,17 +181,14 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                                   "No sessions on ${DateFormat.MMM().format(_selectedDay)} ${_selectedDay.day}, ${_selectedDay.year}",
                                 ),
                               )
-                            : SingleChildScrollView(
-                                child: Column(
-                                  children: sessionVm.sessions.map((e) {
-                                    return SessionCard(
-                                      session: e,
-                                      handleDeleteSession: _handleDeleteSession,
-                                      handleEditSession: _handleEditSession,
-                                    );
-                                  }).toList(),
-                                ),
-                              )
+                            : ListView.separated(
+                              shrinkWrap: true,
+                              itemCount: sessionVm.sessions.length,
+                              separatorBuilder: (context, index) => SizedBox(height: 4,),
+                              itemBuilder: (context, index) {
+                                return SessionCard(session: sessionVm.sessions[index], handleDeleteSession: _handleDeleteSession, handleEditSession: _handleEditSession);
+                              },
+                            )
                       : Center(
                           child: Text(
                             "No sessions on ${DateFormat.MMM().format(_selectedDay)} ${_selectedDay.day}, ${_selectedDay.year}",

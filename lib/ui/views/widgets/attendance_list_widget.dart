@@ -7,9 +7,9 @@ class AttendanceListWidget extends StatelessWidget {
   const AttendanceListWidget({super.key, required this.data});
 
   Color _getProgressColor(double percentage) {
-    if (percentage < 65) return Colors.red;
-    if (percentage < 75) return Colors.orange;
-    return Colors.green;
+    if (percentage < 65) return Colors.red.shade400;
+    if (percentage < 75) return Colors.orange.shade400;
+    return Colors.green.shade400;
   }
 
   @override

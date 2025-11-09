@@ -18,6 +18,9 @@ class SessionRegister {
   int presentCount;
   int totalCount;
   DateTime updatedAt;
+
+  DateTime get updatedAtLocal => updatedAt.toLocal();
+  
   Map<String, AttendanceRow> attendanceRowMap;
 
   factory SessionRegister.fromJson(Map<String, dynamic> json) => _$SessionRegisterFromJson(json);

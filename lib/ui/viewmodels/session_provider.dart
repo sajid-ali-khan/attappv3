@@ -28,8 +28,8 @@ class SessionProvider extends ChangeNotifier {
   String get errorMessage => _errorMessage!;
   SessionRegister get sessionRegister => _sessionRegister!;
   int get fetchingSessionRegisterId => _fetchingSessionRegisterId!;
-  Iterable<SessionModel> get sessions =>
-      _sessionMap == null ? [] : _sessionMap!.values;
+  List<SessionModel> get sessions =>
+      _sessionMap == null ? [] : _sessionMap!.values.toList();
 
   final SessionRepository _sessionRepository = SessionRepository();
 
@@ -76,7 +76,7 @@ class SessionProvider extends ChangeNotifier {
     if (result['success']) {
       final newSession = result["session"] as SessionModel;
       await fetchSessionRegister(newSession.sessionId);
-
+      
       if (_fetched) {
         _created = true;
       } else {

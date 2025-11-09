@@ -30,8 +30,8 @@ class ReportProvider extends ChangeNotifier {
     } else {
       result = await _reportRepository.fetchFullAttendanceReportBetweenDates(
         courseId,
-        startDate!,
-        endDate!,
+        startDate!.toUtc(),
+        endDate!.toUtc(),
       );
     }
     _isLoading = false;

@@ -6,6 +6,7 @@ import 'package:attappv1/ui/views/widgets/custom_appbar2.dart';
 import 'package:attappv1/ui/views/widgets/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:date_field/date_field.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ReportPage extends StatefulWidget {
@@ -115,116 +116,138 @@ class _ReportPageState extends State<ReportPage> {
           spacing: 20,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              spacing: 12,
-              children: [
-                Row(
-                  spacing: 16,
-                  mainAxisSize: MainAxisSize.min,
+            Card(
+              color: Colors.indigo.shade50,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  spacing: 12,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: DateTimeFormField(
-                        mode: DateTimeFieldPickerMode.date,
-                        decoration: const InputDecoration(labelText: 'From'),
-                        firstDate: DateTime(2023),
-                        lastDate: DateTime.now(),
-                        onChanged: (value) => setState(() {
-                          _selectedStartDate = value;
-                        }),
-                      ),
+                    Text('Select Date Range'),
+                    Row(
+                      spacing: 16,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Expanded(
+                          child: DateTimeFormField(
+                            mode: DateTimeFieldPickerMode.date,
+                            decoration: const InputDecoration(labelText: 'From'),
+                            firstDate: DateTime(2023),
+                            lastDate: DateTime.now(),
+                            dateFormat: DateFormat('d MMM yyyy',
+                              Localizations.localeOf(context).toString(),
+                            ),
+                            onChanged: (value) => setState(() {
+                              _selectedStartDate = value;
+                            }),
+                          ),
+                        ),
+                        Expanded(
+                          child: DateTimeFormField(
+                            mode: DateTimeFieldPickerMode.date,
+                            decoration: const InputDecoration(labelText: 'To'),
+                            firstDate: DateTime(2023),
+                            lastDate: DateTime.now(),
+                            dateFormat: DateFormat('d MMM yyyy',
+                              Localizations.localeOf(context).toString(),
+                            ),
+                            onChanged: (value) => setState(() {
+                              _selectedEndDate = value;
+                            }),
+                          ),
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      child: DateTimeFormField(
-                        mode: DateTimeFieldPickerMode.date,
-                        decoration: const InputDecoration(labelText: 'To'),
-                        firstDate: DateTime(2023),
-                        lastDate: DateTime.now(),
-                        onChanged: (value) => setState(() {
-                          _selectedEndDate = value;
-                        }),
+                
+                    // Refresh button
+                    FilledButton.icon(
+                      onPressed:
+                          (reportVm.isLoading ||
+                              _selectedStartDate == null ||
+                              _selectedEndDate == null)
+                          ? null
+                          : _refreshData,
+                      label: reportVm.isLoading
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text('Apply'),
+                      icon: reportVm.isLoading
+                          ? const SizedBox()
+                          : Icon(Icons.refresh),
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: Size(double.infinity, 42),
                       ),
                     ),
                   ],
                 ),
-
-                // Refresh button
-                OutlinedButton.icon(
-                  onPressed:
-                      (reportVm.isLoading ||
-                          _selectedStartDate == null ||
-                          _selectedEndDate == null)
-                      ? null
-                      : _refreshData,
-                  label: reportVm.isLoading
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2,),
-                        )
-                      : Text('Apply'),
-                  icon: reportVm.isLoading
-                      ? const SizedBox()
-                      : Icon(Icons.refresh),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 42),
-                  ),
-                ),
-              ],
-            ),
-
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 4.0,
-              children: [
-                // Sort Chip
-                InputChip(
-                  backgroundColor: Colors.indigo.shade50,
-                  label: Row(
-                    spacing: 4,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [Icon(Icons.sort, size: 16), Text('Sort by %')],
-                  ),
-                  selected: _sortByAttendance,
-                  onSelected: (bool selected) {
-                    setState(() {
-                      _sortByAttendance = selected;
-                      _applyFilters();
-                    });
-                  },
-                ),
-
-                FilterChip(
-                  backgroundColor: Colors.indigo.shade50,
-                  label: Text('Below 75%'),
-                  selected: _below75,
-                  onSelected: (bool selected) {
-                    _below75 = selected;
-                    _applyFilters();
-                  },
-                ),
-                FilterChip(
-                  backgroundColor: Colors.indigo.shade50,
-                  label: Text('Below 65%'),
-                  selected: _below65,
-                  onSelected: (bool selected) {
-                    _below65 = selected;
-                    _applyFilters();
-                  },
-                ),
-              ],
+              ),
             ),
 
             Expanded(
-              child: reportVm.isLoading
-                  ? Center(child: const CircularProgressIndicator())
-                  : reportVm.success
-                  ? _currentReport == null
-                        ? Center(child: Text('No report available'))
-                        : AttendanceListWidget(
-                            data: _currentReport!.studentAttendanceMap.values
-                                .toList(),
-                          )
-                  : Center(child: Text('Couldb\'t fetch the report.')),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8,
+                children: [
+                  Wrap(
+                    spacing: 8.0,
+                    runSpacing: 4.0,
+                    children: [
+                      // Sort Chip
+                      InputChip(
+                        backgroundColor: Colors.indigo.shade50,
+                        label: Row(
+                          spacing: 4,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [Icon(Icons.sort, size: 16), Text('Sort by %')],
+                        ),
+                        selected: _sortByAttendance,
+                        onSelected: (bool selected) {
+                          setState(() {
+                            _sortByAttendance = selected;
+                            _applyFilters();
+                          });
+                        },
+                      ),
+                  
+                      FilterChip(
+                        backgroundColor: Colors.indigo.shade50,
+                        label: Text('Below 75%'),
+                        selected: _below75,
+                        onSelected: (bool selected) {
+                          _below75 = selected;
+                          _applyFilters();
+                        },
+                      ),
+                      FilterChip(
+                        backgroundColor: Colors.indigo.shade50,
+                        label: Text('Below 65%'),
+                        selected: _below65,
+                        onSelected: (bool selected) {
+                          _below65 = selected;
+                          _applyFilters();
+                        },
+                      ),
+                    ],
+                  ),
+                  
+                  Expanded(
+                    child: reportVm.isLoading
+                        ? Center(child: const CircularProgressIndicator())
+                        : reportVm.success
+                        ? _currentReport == null
+                              ? Center(child: Text('No report available'))
+                              : AttendanceListWidget(
+                                  data: _currentReport!.studentAttendanceMap.values
+                                      .toList(),
+                                )
+                        : Center(child: Text('Couldb\'t fetch the report.')),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

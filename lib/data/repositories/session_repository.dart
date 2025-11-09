@@ -21,17 +21,23 @@ class SessionRepository {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
 
-        final sessionMap = data.map(
-          (key, value) =>
-              MapEntry(int.parse(key), SessionModel.fromJson(value)),
-        );
+        final Map<int, SessionModel> sessionMap;
+        try {
+          sessionMap = data.map(
+            (key, value) =>
+                MapEntry(int.parse(key), SessionModel.fromJson(value)),
+          );
+        } catch (e, stack) {
+          log('Error parsing sessionMap keys to int in fetchSessions: $e\n$stack');
+          return {'success': false, 'message': 'Something went wrong.'};
+        }
 
         return {'success': true, 'sessionMap': sessionMap};
       } else {
         return jsonDecode(response.body) as Map<String, dynamic>;
       }
     } catch (e, stack) {
-      log('Error logging in: $e\n$stack');
+      log('Error fetching the sessions: $e\n$stack');
       return {'success': false, 'message': 'Something went wrong.'};
     }
   }
@@ -48,7 +54,7 @@ class SessionRepository {
         return jsonDecode(response.body);
       }
     } catch (e, stack) {
-      log('Error logging in: $e\n$stack');
+      log('Error deleting the session: $e\n$stack');
       return {'success': false, 'message': 'Something went wrong.'};
     }
   }
@@ -71,7 +77,7 @@ class SessionRepository {
         return jsonDecode(response.body);
       }
     } catch (e, stack) {
-      log('Error logging in: $e\n$stack');
+      log('Error creating a new session: $e\n$stack');
       return {'success': false, 'message': 'Something went wrong.'};
     }
   }
@@ -91,7 +97,7 @@ class SessionRepository {
       }
       return jsonDecode(response.body);
     } catch (e, stack) {
-      log('Error logging in: $e\n$stack');
+      log('Error fetching the session register in: $e\n$stack');
       return {'success': false, 'message': 'Something went wrong.'};
     }
   }
@@ -111,7 +117,7 @@ class SessionRepository {
         return jsonDecode(response.body);
       }
     } catch (e, stack) {
-      log('Error logging in: $e\n$stack');
+      log('Error updating the session: $e\n$stack');
       return {'success': false, 'message': 'Something went wrong.'};
     }
   }

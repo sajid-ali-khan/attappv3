@@ -31,6 +31,7 @@ class AuthRepository {
       }
     } catch (e, stack) {
       log('Error logging in: $e\n$stack');
+
       return {'success': false, 'message': 'Something went wrong.'};
     }
   }

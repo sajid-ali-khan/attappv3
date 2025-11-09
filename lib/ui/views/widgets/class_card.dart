@@ -12,34 +12,34 @@ class ClassCard extends StatefulWidget {
 }
 
 class _ClassCardState extends State<ClassCard> {
+  void handleClick() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return ClassDetailsPage(classModel: widget.assignedClass);
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ListTile(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+    return Card(
+      color: Colors.indigo.shade50,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: handleClick,
+        child: ListTile(
+          title: Text(widget.assignedClass.className),
+          subtitle: Text(
+            widget.assignedClass.subjectName,
+            style: TextStyle(fontSize: 12),
           ),
-          tileColor: Colors.indigo[50],
-          splashColor: Colors.indigo[50],
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return ClassDetailsPage(
-                    classModel: widget.assignedClass,
-                  );
-                },
-              ),
-            );
-          },
-          title: Text(widget.assignedClass.subjectName),
-          subtitle: Text(widget.assignedClass.className),
           trailing: Icon(Icons.arrow_forward_ios),
         ),
-        SizedBox(height: 10),
-      ],
+      ),
     );
+    // return Card(color: Colors.indigo.shade50 ,child: ListTile(title: Text('Consolidated Attendance Report'),),);
   }
 }

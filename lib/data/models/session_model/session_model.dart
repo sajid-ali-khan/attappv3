@@ -1,4 +1,4 @@
-
+import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'session_model.g.dart';
@@ -15,6 +15,12 @@ class SessionModel {
     required this.updatedAt,
   });
 
-  factory SessionModel.fromJson(Map<String, dynamic> json) => _$SessionModelFromJson(json);
+  String get updatedAtLocal {
+    DateTime localTime = updatedAt.toLocal(); // convert
+    return DateFormat.jm().format(localTime);
+  }
+
+  factory SessionModel.fromJson(Map<String, dynamic> json) =>
+      _$SessionModelFromJson(json);
   Map<String, dynamic> toJson() => _$SessionModelToJson(this);
 }
