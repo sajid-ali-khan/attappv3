@@ -30,8 +30,10 @@ class ClassesRepository {
         return jsonDecode(response.body) as Map<String, dynamic>;
       }
     } catch (e, stack) {
-      log('Error logging in: $e\n$stack');
+      log('Error fetching faculty classes: $e\n$stack');
       return {'success': false, 'message': 'Something went wrong.'};
     }
   }
+
+  
 }

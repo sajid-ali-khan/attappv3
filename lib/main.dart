@@ -1,4 +1,5 @@
 import 'package:attappv1/ui/viewmodels/auth_provider.dart';
+import 'package:attappv1/ui/viewmodels/class_provider.dart';
 import 'package:attappv1/ui/viewmodels/classes_provider.dart';
 import 'package:attappv1/ui/viewmodels/report_provider.dart';
 import 'package:attappv1/ui/viewmodels/session_provider.dart';
@@ -19,6 +20,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => ClassesProvider()),
         ChangeNotifierProvider(create: (_) => SessionProvider()),
         ChangeNotifierProvider(create: (_) => ReportProvider()),
+        ChangeNotifierProvider(create: (_) => ClassProvider()),
       ],
       child: const MyApp(),
     ),
@@ -33,6 +35,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        canvasColor: Colors.white,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
       ),
       home: SplashScreen(),

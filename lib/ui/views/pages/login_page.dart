@@ -28,13 +28,13 @@ class _LoginPageState extends State<LoginPage> {
         width: double.infinity,
         padding: EdgeInsets.all(32),
         child: Column(
-          spacing: 32,
+          spacing: 24,
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
 
           children: [
             Column(
-              spacing: 10,
+              spacing: 8,
               children: [
                 Text('Login', style: TextStyle(fontSize: 24)),
                 Text('to continue to Attendance Management'),
@@ -46,9 +46,12 @@ class _LoginPageState extends State<LoginPage> {
                 TextField(
                   controller: _usernameController,
                   keyboardType: TextInputType.numberWithOptions(signed: true),
-                  decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Enter your userId',
+                  decoration: InputDecoration(
+                    filled: true,
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.indigo.shade50,
+                    hintText: "UserId",
+                    prefixIcon: Icon(Icons.person)
                   ),
                 ),
 
@@ -56,15 +59,19 @@ class _LoginPageState extends State<LoginPage> {
                   controller: _passwordController,
                   obscureText: _obscureText,
                   decoration: InputDecoration(
-                    border: const UnderlineInputBorder(),
-                    labelText: 'Enter your password',
+                    filled: true,
+                    border: OutlineInputBorder(),
+                    fillColor: Colors.indigo.shade50,
+                    hintText: 'Password',
+                    prefixIcon: Icon(Icons.key),
                     suffixIcon: IconButton(
                       icon: _obscureText
                           ? const Icon(Icons.visibility)
                           : const Icon(Icons.visibility_off),
                       onPressed: () {
                         setState(() {
-                          _obscureText = !_obscureText; // Toggle password visibility
+                          _obscureText =
+                              !_obscureText; // Toggle password visibility
                         });
                       },
                     ),

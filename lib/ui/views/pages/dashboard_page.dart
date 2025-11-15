@@ -2,6 +2,7 @@ import 'package:attappv1/data/services/api/faculty_service.dart';
 import 'package:attappv1/data/services/shared_prefs_service.dart';
 import 'package:attappv1/data/services/token_service.dart';
 import 'package:attappv1/ui/viewmodels/classes_provider.dart';
+import 'package:attappv1/ui/views/pages/class_selection_page.dart';
 import 'package:attappv1/ui/views/pages/login_page.dart';
 import 'package:attappv1/ui/views/widgets/class_card.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +67,9 @@ class _DashboardPageState extends State<DashboardPage> {
               color: Colors.indigo.shade50,
               child: InkWell(
                 borderRadius: BorderRadius.circular(12),
-                onTap: (){},
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ClassSelectionPage(),));
+                },
                 child: ListTile(
                   title: Text('Consolidated Attendance Report'),
                   subtitle: Text('Attendance Report of any class'),
