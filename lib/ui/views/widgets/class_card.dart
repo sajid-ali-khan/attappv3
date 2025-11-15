@@ -25,21 +25,65 @@ class _ClassCardState extends State<ClassCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.indigo.shade50,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: handleClick,
-        child: ListTile(
-          title: Text(widget.assignedClass.className),
-          subtitle: Text(
-            widget.assignedClass.subjectName,
-            style: TextStyle(fontSize: 12),
+    return Material(
+      borderRadius: BorderRadius.circular(12),
+      elevation: 0,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: handleClick,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              spacing: 12,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.indigo.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.class_,
+                    color: Colors.indigo.shade700,
+                    size: 20,
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 2,
+                    children: [
+                      Text(
+                        widget.assignedClass.className,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        widget.assignedClass.subjectName,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14,
+                  color: Colors.grey.shade600,
+                ),
+              ],
+            ),
           ),
-          trailing: Icon(Icons.arrow_forward_ios),
         ),
       ),
     );
-    // return Card(color: Colors.indigo.shade50 ,child: ListTile(title: Text('Consolidated Attendance Report'),),);
   }
 }

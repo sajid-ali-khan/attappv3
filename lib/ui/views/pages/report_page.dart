@@ -11,8 +11,19 @@ import 'package:provider/provider.dart';
 
 class ReportPage extends StatefulWidget {
   final ClassModel classModel;
+  final bool consolidated;
+  final int? branchCode;
+  final int? semester;
+  final String? section;
 
-  const ReportPage({super.key, required this.classModel});
+  const ReportPage({
+    super.key,
+    required this.classModel,
+    this.consolidated = false,
+    this.branchCode,
+    this.semester,
+    this.section,
+  });
 
   @override
   State<ReportPage> createState() => _ReportPageState();
@@ -33,7 +44,18 @@ class _ReportPageState extends State<ReportPage> {
     super.initState(); // original data on load
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final reportVm = context.read<ReportProvider>();
-      await reportVm.getReport(courseId: widget.classModel.classId);
+      
+      if (widget.consolidated) {
+        // For consolidated report, use branchCode, semester, and section
+        await reportVm.getClassReport(
+          branchCode: widget.branchCode!,
+          semester: widget.semester!,
+          section: widget.section!,
+        );
+      } else {
+        // For individual class report, use courseId
+        await reportVm.getReport(courseId: widget.classModel.classId);
+      }
 
       if (!mounted) return;
 
@@ -80,13 +102,131 @@ class _ReportPageState extends State<ReportPage> {
     });
   }
 
+  void _showDateFilterDialog() {
+    DateTime? tempStartDate = _selectedStartDate;
+    DateTime? tempEndDate = _selectedEndDate;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Filter by Date Range'),
+              contentPadding: const EdgeInsets.all(20),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 16,
+                children: [
+                  DateTimeFormField(
+                    mode: DateTimeFieldPickerMode.date,
+                    initialValue: tempStartDate,
+                    decoration: InputDecoration(
+                      labelText: 'From',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+                    ),
+                    firstDate: DateTime(2023),
+                    lastDate: DateTime.now(),
+                    dateFormat: DateFormat('d MMM yyyy',
+                      Localizations.localeOf(context).toString(),
+                    ),
+                    onChanged: (value) {
+                      setDialogState(() {
+                        tempStartDate = value;
+                      });
+                    },
+                  ),
+                  DateTimeFormField(
+                    mode: DateTimeFieldPickerMode.date,
+                    initialValue: tempEndDate,
+                    decoration: InputDecoration(
+                      labelText: 'To',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+                    ),
+                    firstDate: DateTime(2023),
+                    lastDate: DateTime.now(),
+                    dateFormat: DateFormat('d MMM yyyy',
+                      Localizations.localeOf(context).toString(),
+                    ),
+                    onChanged: (value) {
+                      setDialogState(() {
+                        tempEndDate = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _selectedStartDate = null;
+                      _selectedEndDate = null;
+                    });
+                    Navigator.of(context).pop();
+                    _refreshData();
+                  },
+                  child: const Text('Clear Filter'),
+                ),
+                FilledButton(
+                  onPressed: (tempStartDate == null || tempEndDate == null)
+                      ? null
+                      : () {
+                          setState(() {
+                            _selectedStartDate = tempStartDate;
+                            _selectedEndDate = tempEndDate;
+                          });
+                          Navigator.of(context).pop();
+                          _refreshData();
+                        },
+                  child: const Text('Apply'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   Future<void> _refreshData() async {
     final reportVm = context.read<ReportProvider>();
-    await reportVm.getReport(
-      courseId: widget.classModel.classId,
-      startDate: _selectedStartDate,
-      endDate: _selectedEndDate,
-    );
+    
+    if (widget.consolidated) {
+      // For consolidated report, use date filters if provided
+      await reportVm.getClassReport(
+        branchCode: widget.branchCode!,
+        semester: widget.semester!,
+        section: widget.section!,
+        startDate: _selectedStartDate,
+        endDate: _selectedEndDate,
+      );
+    } else {
+      // For individual class report, use date filters
+      await reportVm.getReport(
+        courseId: widget.classModel.classId,
+        startDate: _selectedStartDate,
+        endDate: _selectedEndDate,
+      );
+    }
 
     if (reportVm.success) {
       setState(() {
@@ -106,103 +246,64 @@ class _ReportPageState extends State<ReportPage> {
       backgroundColor: Colors.white,
       appBar: CustomAppbar2(
         title: 'Attendance Report',
-        subTitle:
-            '${widget.classModel.className} - ${widget.classModel.subjectName}',
+        subTitle: widget.consolidated
+            ? 'Branch: ${widget.branchCode}, Sem: ${widget.semester}, Sec: ${widget.section}'
+            : '${widget.classModel.className} - ${widget.classModel.subjectName}',
       ),
-      body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-        child: Column(
-          spacing: 20,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Card(
-              color: Colors.indigo.shade50,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  spacing: 12,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Select Date Range'),
-                    Row(
-                      spacing: 16,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Expanded(
-                          child: DateTimeFormField(
-                            mode: DateTimeFieldPickerMode.date,
-                            decoration: const InputDecoration(labelText: 'From'),
-                            firstDate: DateTime(2023),
-                            lastDate: DateTime.now(),
-                            dateFormat: DateFormat('d MMM yyyy',
-                              Localizations.localeOf(context).toString(),
-                            ),
-                            onChanged: (value) => setState(() {
-                              _selectedStartDate = value;
-                            }),
-                          ),
-                        ),
-                        Expanded(
-                          child: DateTimeFormField(
-                            mode: DateTimeFieldPickerMode.date,
-                            decoration: const InputDecoration(labelText: 'To'),
-                            firstDate: DateTime(2023),
-                            lastDate: DateTime.now(),
-                            dateFormat: DateFormat('d MMM yyyy',
-                              Localizations.localeOf(context).toString(),
-                            ),
-                            onChanged: (value) => setState(() {
-                              _selectedEndDate = value;
-                            }),
-                          ),
-                        ),
-                      ],
-                    ),
-                
-                    // Refresh button
-                    FilledButton.icon(
-                      onPressed:
-                          (reportVm.isLoading ||
-                              _selectedStartDate == null ||
-                              _selectedEndDate == null)
-                          ? null
-                          : _refreshData,
-                      label: reportVm.isLoading
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : Text('Apply'),
-                      icon: reportVm.isLoading
-                          ? const SizedBox()
-                          : Icon(Icons.refresh),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: Size(double.infinity, 42),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            Expanded(
-              child: Column(
+      body: SingleChildScrollView(
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+          child: Column(
+            spacing: 16,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                spacing: 12,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 8,
                 children: [
+                  Text(
+                    'Filters',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   Wrap(
                     spacing: 8.0,
-                    runSpacing: 4.0,
+                    runSpacing: 8.0,
                     children: [
-                      // Sort Chip
-                      InputChip(
-                        backgroundColor: Colors.indigo.shade50,
+                      // Date Filter Chip
+                      FilterChip(
                         label: Row(
                           spacing: 4,
                           mainAxisSize: MainAxisSize.min,
-                          children: [Icon(Icons.sort, size: 16), Text('Sort by %')],
+                          children: [
+                            const Icon(Icons.date_range, size: 16),
+                            Text(
+                              _selectedStartDate != null && _selectedEndDate != null
+                                  ? '${DateFormat('d MMM').format(_selectedStartDate!)} - ${DateFormat('d MMM').format(_selectedEndDate!)}'
+                                  : 'Select Date Range',
+                            ),
+                          ],
+                        ),
+                        onSelected: (_) => _showDateFilterDialog(),
+                        backgroundColor: Colors.grey.shade100,
+                        selectedColor: Colors.indigo.shade100,
+                        side: BorderSide(
+                          color: _selectedStartDate != null && _selectedEndDate != null
+                              ? Colors.indigo
+                              : Colors.grey.shade300,
+                        ),
+                      ),
+                      // Sort Chip
+                      FilterChip(
+                        label: Row(
+                          spacing: 4,
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Icon(Icons.sort, size: 16),
+                            Text('Sort by Attendance %'),
+                          ],
                         ),
                         selected: _sortByAttendance,
                         onSelected: (bool selected) {
@@ -211,45 +312,118 @@ class _ReportPageState extends State<ReportPage> {
                             _applyFilters();
                           });
                         },
+                        backgroundColor: Colors.grey.shade100,
+                        selectedColor: Colors.indigo.shade100,
+                        side: BorderSide(
+                          color: _sortByAttendance
+                              ? Colors.indigo
+                              : Colors.grey.shade300,
+                        ),
                       ),
-                  
                       FilterChip(
-                        backgroundColor: Colors.indigo.shade50,
-                        label: Text('Below 75%'),
+                        label: const Text('Below 75%'),
                         selected: _below75,
                         onSelected: (bool selected) {
-                          _below75 = selected;
-                          _applyFilters();
+                          setState(() {
+                            _below75 = selected;
+                            _applyFilters();
+                          });
                         },
+                        backgroundColor: Colors.grey.shade100,
+                        selectedColor: Colors.indigo.shade100,
+                        side: BorderSide(
+                          color: _below75
+                              ? Colors.indigo
+                              : Colors.grey.shade300,
+                        ),
                       ),
                       FilterChip(
-                        backgroundColor: Colors.indigo.shade50,
-                        label: Text('Below 65%'),
+                        label: const Text('Below 65%'),
                         selected: _below65,
                         onSelected: (bool selected) {
-                          _below65 = selected;
-                          _applyFilters();
+                          setState(() {
+                            _below65 = selected;
+                            _applyFilters();
+                          });
                         },
+                        backgroundColor: Colors.grey.shade100,
+                        selectedColor: Colors.indigo.shade100,
+                        side: BorderSide(
+                          color: _below65
+                              ? Colors.indigo
+                              : Colors.grey.shade300,
+                        ),
                       ),
                     ],
                   ),
                   
-                  Expanded(
-                    child: reportVm.isLoading
-                        ? Center(child: const CircularProgressIndicator())
-                        : reportVm.success
-                        ? _currentReport == null
-                              ? Center(child: Text('No report available'))
-                              : AttendanceListWidget(
-                                  data: _currentReport!.studentAttendanceMap.values
-                                      .toList(),
-                                )
-                        : Center(child: Text('Couldb\'t fetch the report.')),
-                  ),
+                  reportVm.isLoading
+                      ? const SizedBox(
+                          height: 300,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      : reportVm.success
+                      ? _currentReport == null
+                            ? SizedBox(
+                                height: 300,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.inbox_outlined,
+                                        size: 48,
+                                        color: Colors.grey.shade400,
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        'No report available',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              color: Colors.grey.shade600,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : AttendanceListWidget(
+                                data: _currentReport!.studentAttendanceMap.values
+                                    .toList(),
+                              )
+                      : SizedBox(
+                          height: 300,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  size: 48,
+                                  color: Colors.red.shade400,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'Couldn\'t fetch the report',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                        color: Colors.red.shade600,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

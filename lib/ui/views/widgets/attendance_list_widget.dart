@@ -17,232 +17,164 @@ class AttendanceListWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(color: Color(0xffE5E7EB)),
+        border: Border.all(color: Colors.grey.shade200),
         borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            spreadRadius: 0,
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
-        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: Column(
-          children: [
-            // Header row
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-              decoration: const BoxDecoration(
-                border: Border(bottom: BorderSide(color: Color(0xFFE5E7EB))),
-                color: Color.fromRGBO(232, 234, 246, 1),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                spacing: 16,
-                children: [
-                  SizedBox(width: 32),
-                  Expanded(
-                    child: Text(
-                      'Student',
-                      style: TextStyle(fontSize: 12, color: Color(0xff4B5563)),
-                    ),
+        child: data.isEmpty
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.inbox_outlined,
+                        size: 48,
+                        color: Colors.grey.shade400,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'No attendance data available',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: Row(
-                      spacing: 16,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                'Present',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xff4B5563),
+                ),
+              )
+            : SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    headingRowColor: WidgetStateColor.resolveWith(
+                      (states) => Colors.grey.shade100,
+                    ),
+                    dataRowMinHeight: 48,
+                    dataRowMaxHeight: 60,
+                    columnSpacing: 12,
+                    columns: [
+                      DataColumn(
+                        label: Text(
+                          'Roll',
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    DataColumn(
+                      label: Expanded(
+                        child: Text(
+                          'Name',
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        'Pres',
+                        style: Theme.of(context).textTheme.labelSmall
+                            ?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      numeric: true,
+                    ),
+                    DataColumn(
+                      label: Text(
+                        'Total',
+                        style: Theme.of(context).textTheme.labelSmall
+                            ?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      numeric: true,
+                    ),
+                    DataColumn(
+                      label: Text(
+                        'Att %',
+                        style: Theme.of(context).textTheme.labelSmall
+                            ?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      numeric: true,
+                    ),
+                    ],
+                    rows: data
+                        .map(
+                          (student) => DataRow(
+                            cells: [
+                              DataCell(
+                                Text(
+                                  student.roll,
+                                  style: Theme.of(context).textTheme.labelSmall
+                                      ?.copyWith(fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  student.name,
+                                  style: Theme.of(context).textTheme.labelSmall
+                                      ?.copyWith(fontWeight: FontWeight.w500),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              DataCell(
+                                Center(
+                                  child: Text(
+                                    student.presentDays.toString(),
+                                    style: Theme.of(context).textTheme.labelSmall
+                                        ?.copyWith(fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Center(
+                                  child: Text(
+                                    student.totalDays.toString(),
+                                    style: Theme.of(context).textTheme.labelSmall
+                                        ?.copyWith(fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Center(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: _getProgressColor(
+                                        student.attendancePercentage,
+                                      ).withAlpha(30),
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(
+                                        color: _getProgressColor(
+                                          student.attendancePercentage,
+                                        ),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      '${student.attendancePercentage.toStringAsFixed(1)}%',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        color: _getProgressColor(
+                                          student.attendancePercentage,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Rate',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Color(0xff4B5563),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                        )
+                        .toList(),
                   ),
-                ],
+                ),
               ),
-            ),
-
-            // List rows
-            Expanded(
-              child: data.isEmpty
-                  ? Center(child: Text('No report available.'))
-                  : SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          ...data.map((student) {
-                            final percentage = student.attendancePercentage;
-                            final progressColor = _getProgressColor(percentage);
-                            final percentageText =
-                                "${percentage.toStringAsFixed(0)}%";
-
-                            return Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 14,
-                              ),
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(color: Color(0xFFE5E7EB)),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                spacing: 16,
-                                children: [
-                                  // Student info
-                                  CircleAvatar(
-                                    radius: 18,
-                                    backgroundColor: const Color(0xFFE8EDFF),
-                                    child: Text(
-                                      student.name[0],
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFF4361EE),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          student.name,
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        Text(
-                                          student.roll,
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Color(0xFF6B7280),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-                                  Expanded(
-                                    child: Row(
-                                      spacing: 16,
-                                      children: [
-                                        // Present count
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              const Text(
-                                                "Present",
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Color(0xFF6B7280),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 2),
-                                              Text(
-                                                "${student.presentDays}/${student.totalDays}",
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-
-                                        // Rate bar and percentage
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              // Progress bar
-                                              Stack(
-                                                children: [
-                                                  Container(
-                                                    height: 6,
-                                                    decoration: BoxDecoration(
-                                                      color: const Color(
-                                                        0xFFE5E7EB,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            3,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                  FractionallySizedBox(
-                                                    widthFactor:
-                                                        percentage / 100,
-                                                    child: Container(
-                                                      height: 6,
-                                                      decoration: BoxDecoration(
-                                                        color: progressColor,
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              3,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                percentageText,
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: progressColor,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }),
-                        ],
-                      ),
-                    ),
-            ),
-          ],
-        ),
       ),
     );
   }

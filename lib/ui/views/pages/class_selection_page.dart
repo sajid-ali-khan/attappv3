@@ -1,4 +1,7 @@
+import 'package:attappv1/data/models/class_model/class_model.dart';
 import 'package:attappv1/ui/viewmodels/class_provider.dart';
+import 'package:attappv1/ui/views/pages/report_page.dart';
+import 'package:attappv1/ui/views/widgets/custom_appbar2.dart';
 import 'package:attappv1/ui/views/widgets/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -27,32 +30,41 @@ class _ClassSelectionPageState extends State<ClassSelectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text('Consolidated Report'),
+      appBar: CustomAppbar2(
+        title: 'Consolidated Report',
+        subTitle: 'Select class filters to view attendance',
       ),
       body: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
-          spacing: 24,
+          spacing: 20,
           children: [
-            Text('Select Class', style: TextStyle(fontSize: 16)),
+            Text(
+              'Select Class',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             // Branch Dropdown
             Consumer<ClassProvider>(
               builder: (context, classProvider, _) {
                 return Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.grey.shade200),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.grey.shade50,
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       isExpanded: true,
-                      hint: Text('Select Branch'),
+                      hint: Text(
+                        'Select Branch',
+                        style: TextStyle(color: Colors.grey.shade600),
+                      ),
                       value: selectedBranchCode,
                       dropdownColor: Colors.white,
                       items: classProvider.branches.map((branch) {
@@ -82,20 +94,24 @@ class _ClassSelectionPageState extends State<ClassSelectionPage> {
               builder: (context, classProvider, _) {
                 return Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.grey.shade200),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.grey.shade50,
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<int>(
                       isExpanded: true,
-                      hint: Text('Select Semester'),
+                      hint: Text(
+                        'Select Semester',
+                        style: TextStyle(color: Colors.grey.shade600),
+                      ),
                       value: selectedSemester,
                       dropdownColor: Colors.white,
                       items: classProvider.semesters.map((semester) {
                         return DropdownMenuItem<int>(
                           value: semester,
-                          child: Text(semester.toString()),
+                          child: Text('Semester $semester'),
                         );
                       }).toList(),
                       onChanged: (int? newValue) {
@@ -118,20 +134,24 @@ class _ClassSelectionPageState extends State<ClassSelectionPage> {
               builder: (context, classProvider, _) {
                 return Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.grey.shade200),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.grey.shade50,
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       isExpanded: true,
-                      hint: Text('Select Section'),
+                      hint: Text(
+                        'Select Section',
+                        style: TextStyle(color: Colors.grey.shade600),
+                      ),
                       value: selectedSection,
                       dropdownColor: Colors.white,
                       items: classProvider.sections.map((section) {
                         return DropdownMenuItem<String>(
                           value: section,
-                          child: Text(section),
+                          child: Text('Section $section'),
                         );
                       }).toList(),
                       onChanged: (String? newValue) {
@@ -146,13 +166,17 @@ class _ClassSelectionPageState extends State<ClassSelectionPage> {
                 );
               },
             ),
+            const SizedBox(height: 8),
             // Submit Button
-            FilledButton(
+            FilledButton.icon(
               onPressed: _handleSubmit,
-              child: const SizedBox(
-                width: double.infinity,
-                child: Center(
-                  child: Text('Submit'),
+              icon: const Icon(Icons.arrow_forward),
+              label: const Text('View Report'),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size(double.infinity, 48),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
             ),
@@ -168,9 +192,24 @@ class _ClassSelectionPageState extends State<ClassSelectionPage> {
       return;
     }
 
-    // TODO: Handle the submission with selectedBranchCode, selectedSemester, selectedSection
-    print('Branch Code: $selectedBranchCode');
-    print('Semester: $selectedSemester');
-    print('Section: $selectedSection');
+    // Create a dummy ClassModel for consolidated report
+    final consolidatedClassModel = ClassModel(
+      classId: 0,
+      className: 'Consolidated Report',
+      subjectName: 'Branch: $selectedBranchCode, Semester: $selectedSemester, Section: $selectedSection',
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReportPage(
+          classModel: consolidatedClassModel,
+          consolidated: true,
+          branchCode: int.parse(selectedBranchCode!),
+          semester: selectedSemester,
+          section: selectedSection,
+        ),
+      ),
+    );
   }
 }

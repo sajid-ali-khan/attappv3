@@ -18,6 +18,9 @@ class CustomAppbar2 extends StatelessWidget
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
+        border: Border(
+          bottom: BorderSide(color: Colors.grey.shade200),
+        ),
       ),
       child: SafeArea(
         bottom: false,
@@ -27,8 +30,11 @@ class CustomAppbar2 extends StatelessWidget
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               IconButton(
-                icon: const Icon(Icons.arrow_back,
-                    color: Colors.black87, size: 22),
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Colors.grey.shade700,
+                  size: 22,
+                ),
                 onPressed: onBack ?? () => Navigator.pop(context),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
@@ -36,20 +42,19 @@ class CustomAppbar2 extends StatelessWidget
               const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 4,
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.black87,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: Colors.grey.shade900,
                     ),
                   ),
-                  const SizedBox(height: 4),
                   Text(
                     subTitle,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.black54,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey.shade600,
                     ),
                   ),
                 ],

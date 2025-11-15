@@ -52,55 +52,153 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text('Attendance Management'),
+        title: Text(
+          'Attendance Management',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         actions: [
-          IconButton(onPressed: _handleLogout, icon: Icon(Icons.logout)),
+          IconButton(
+            onPressed: _handleLogout,
+            icon: Icon(Icons.logout, color: Colors.grey.shade700),
+          ),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: Column(
-          spacing: 24,
+          spacing: 20,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Card(
-              color: Colors.indigo.shade50,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(12),
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ClassSelectionPage(),));
-                },
-                child: ListTile(
-                  title: Text('Consolidated Attendance Report'),
-                  subtitle: Text('Attendance Report of any class'),
+            // Consolidated Report Card
+            Material(
+              borderRadius: BorderRadius.circular(12),
+              elevation: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade200),
+                ),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ClassSelectionPage(),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      spacing: 12,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.indigo.shade100,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.assessment,
+                            color: Colors.indigo.shade700,
+                            size: 24,
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: 4,
+                            children: [
+                              Text(
+                                'Consolidated Report',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall
+                                    ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                'View attendance by branch/semester/section',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(Icons.arrow_forward_ios,
+                            size: 16, color: Colors.grey.shade600),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
+
+            // My Classes Section
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 12,
               children: [
-                Text('My Classes', style: const TextStyle(fontSize: 20)),
+                Text(
+                  'My Classes',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 Text(
                   'Welcome back, $facultyName',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey.shade600,
                   ),
                 ),
               ],
             ),
+
             Expanded(
               child: classes.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : classes.success
-                  ? ListView.separated(
-                    separatorBuilder: (context, index) => SizedBox(height: 4,),
-                      itemCount: classes.classes.length,
-                      itemBuilder: (context, index) {
-                        return ClassCard(assignedClass: classes.classes[index]);
-                      },
-                    )
-                  : const Center(child: Text('No classes assigned to you')),
+                      ? ListView.separated(
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 8),
+                          itemCount: classes.classes.length,
+                          itemBuilder: (context, index) {
+                            return ClassCard(
+                              assignedClass: classes.classes[index],
+                            );
+                          },
+                        )
+                      : Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.inbox_outlined,
+                                size: 48,
+                                color: Colors.grey.shade400,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                'No classes assigned to you',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
             ),
           ],
         ),

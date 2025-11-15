@@ -26,18 +26,27 @@ class _LoginPageState extends State<LoginPage> {
       body: Container(
         height: double.infinity,
         width: double.infinity,
-        padding: EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
         child: Column(
           spacing: 24,
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-
           children: [
             Column(
               spacing: 8,
               children: [
-                Text('Login', style: TextStyle(fontSize: 24)),
-                Text('to continue to Attendance Management'),
+                Text(
+                  'Login',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  'to continue to Attendance Management',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey.shade600,
+                  ),
+                ),
               ],
             ),
             Column(
@@ -48,39 +57,79 @@ class _LoginPageState extends State<LoginPage> {
                   keyboardType: TextInputType.numberWithOptions(signed: true),
                   decoration: InputDecoration(
                     filled: true,
-                    border: OutlineInputBorder(),
-                    fillColor: Colors.indigo.shade50,
-                    hintText: "UserId",
-                    prefixIcon: Icon(Icons.person)
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade200),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(
+                        color: Colors.indigo,
+                        width: 2,
+                      ),
+                    ),
+                    fillColor: Colors.grey.shade50,
+                    hintText: 'UserId',
+                    hintStyle: TextStyle(color: Colors.grey.shade500),
+                    prefixIcon: Icon(Icons.person, color: Colors.grey.shade600),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                   ),
                 ),
-
                 TextField(
                   controller: _passwordController,
                   obscureText: _obscureText,
                   decoration: InputDecoration(
                     filled: true,
-                    border: OutlineInputBorder(),
-                    fillColor: Colors.indigo.shade50,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade200),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(
+                        color: Colors.indigo,
+                        width: 2,
+                      ),
+                    ),
+                    fillColor: Colors.grey.shade50,
                     hintText: 'Password',
-                    prefixIcon: Icon(Icons.key),
+                    hintStyle: TextStyle(color: Colors.grey.shade500),
+                    prefixIcon: Icon(Icons.lock, color: Colors.grey.shade600),
                     suffixIcon: IconButton(
-                      icon: _obscureText
-                          ? const Icon(Icons.visibility)
-                          : const Icon(Icons.visibility_off),
+                      icon: Icon(
+                        _obscureText ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey.shade600,
+                      ),
                       onPressed: () {
                         setState(() {
-                          _obscureText =
-                              !_obscureText; // Toggle password visibility
+                          _obscureText = !_obscureText;
                         });
                       },
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
                     ),
                   ),
                 ),
               ],
             ),
             auth.isLoading
-                ? const CircularProgressIndicator()
+                ? const SizedBox(
+                    height: 48,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
                 : FilledButton(
                     onPressed: () async {
                       if (_usernameController.text.trim() == '' ||
@@ -103,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DashboardPage(),
+                            builder: (context) => const DashboardPage(),
                           ),
                         );
                       } else if (auth.errorMessage != null) {
@@ -111,9 +160,19 @@ class _LoginPageState extends State<LoginPage> {
                       }
                     },
                     style: FilledButton.styleFrom(
-                      minimumSize: Size(double.infinity, 48),
+                      minimumSize: const Size(double.infinity, 48),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                    child: Text('Login'),
+                    child: Text(
+                      'Login',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
           ],
         ),

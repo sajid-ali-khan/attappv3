@@ -1,13 +1,19 @@
 import 'package:attappv1/data/models/session_register/session_register.dart';
+import 'package:attappv1/data/models/class_model/class_model.dart';
 import 'package:attappv1/ui/viewmodels/session_provider.dart';
+import 'package:attappv1/ui/views/widgets/custom_appbar2.dart';
 import 'package:attappv1/ui/views/widgets/shared.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class MarkAttendancePage extends StatefulWidget {
-  const MarkAttendancePage({super.key, required this.sessionRegister});
+  const MarkAttendancePage({
+    super.key,
+    required this.sessionRegister,
+    required this.classModel,
+  });
   final SessionRegister sessionRegister;
+  final ClassModel classModel;
   @override
   State<MarkAttendancePage> createState() => _MarkAttendancePageState();
 }
@@ -52,54 +58,106 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Attendance'),
-        actions: [
-          Text(
-            DateFormat.yMMMd(
-              'en_US',
-            ).add_jm().format(widget.sessionRegister.updatedAt),
-          ),
-        ],
+      backgroundColor: Colors.white,
+      appBar: CustomAppbar2(
+        title: widget.classModel.className,
+        subTitle: widget.classModel.subjectName,
       ),
       body: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
+          spacing: 16,
           children: [
+            // Session Name Input
             TextField(
               controller: _sessionNameController,
               onChanged: (value) => setState(() {
-                widget.sessionRegister.sessionName = _sessionNameController.text
-                    .trim();
+                widget.sessionRegister.sessionName =
+                    _sessionNameController.text.trim();
               }),
               decoration: InputDecoration(
-                label: Text('Session name'),
-                border: OutlineInputBorder(),
+                labelText: 'Session name',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey.shade200),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    color: Colors.indigo,
+                    width: 2,
+                  ),
+                ),
+                fillColor: Colors.grey.shade50,
+                filled: true,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
               ),
             ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Present'),
-                Text(
-                  '${widget.sessionRegister.presentCount}/${widget.sessionRegister.totalCount}',
+
+            // Attendance Summary Card
+            Material(
+              borderRadius: BorderRadius.circular(12),
+              elevation: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade200),
                 ),
-              ],
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  spacing: 12,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Attendance',
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          '${widget.sessionRegister.presentCount}/${widget.sessionRegister.totalCount}',
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.indigo,
+                          ),
+                        ),
+                      ],
+                    ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: widget.sessionRegister.presentCount /
+                            widget.sessionRegister.totalCount,
+                        minHeight: 8,
+                        backgroundColor: Colors.grey.shade200,
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          Colors.indigo,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            SizedBox(height: 10),
-            LinearProgressIndicator(
-              value:
-                  widget.sessionRegister.presentCount /
-                  widget.sessionRegister.totalCount,
-              minHeight: 6,
-            ),
-            SizedBox(height: 20),
+
+            // Quick Action Buttons
             Row(
+              spacing: 10,
               children: [
                 Expanded(
-                  child: OutlinedButton(
+                  child: OutlinedButton.icon(
                     onPressed: () {
                       setState(() {
                         markAllPresent();
@@ -107,33 +165,54 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                             widget.sessionRegister.totalCount;
                       });
                     },
-                    child: Text('Mark All Present'),
+                    icon: const Icon(Icons.check_circle, size: 18),
+                    label: const Text('All Present'),
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      side: BorderSide(color: Colors.grey.shade300),
+                    ),
                   ),
                 ),
-                SizedBox(width: 10),
                 Expanded(
-                  child: OutlinedButton(
+                  child: OutlinedButton.icon(
                     onPressed: () {
                       setState(() {
                         markAllAbsent();
                         widget.sessionRegister.presentCount = 0;
                       });
                     },
-                    child: Text('Mark All Absent'),
+                    icon: const Icon(Icons.cancel, size: 18),
+                    label: const Text('All Absent'),
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      side: BorderSide(color: Colors.grey.shade300),
+                    ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+
+            // Attendance List
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
-                  children: widget.sessionRegister.attendanceRowMap.values.map((
-                    e,
-                  ) {
-                    return Column(
-                      children: [
-                        SwitchListTile(
+                  children: widget.sessionRegister.attendanceRowMap.values
+                      .map((e) {
+                    return Material(
+                      borderRadius: BorderRadius.circular(8),
+                      elevation: 0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.grey.shade200),
+                        ),
+                        margin: const EdgeInsets.only(bottom: 8),
+                        child: SwitchListTile(
                           value: e.status,
                           onChanged: (bool val) {
                             setState(() {
@@ -145,34 +224,60 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                               }
                             });
                           },
-                          title: Text(e.name),
-                          subtitle: Text(e.roll),
+                          tileColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          title: Text(
+                            e.name,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          subtitle: Text(
+                            e.roll,
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                          activeThumbColor: Colors.indigo,
                         ),
-                        Divider(),
-                      ],
+                      ),
                     );
                   }).toList(),
                 ),
               ),
             ),
-            SizedBox(height: 10),
-            FilledButton(
+
+            // Save Button
+            FilledButton.icon(
               onPressed: context.watch<SessionProvider>().isUpdating
                   ? null
                   : _handleSessionUpdate,
-              style: FilledButton.styleFrom(
-                minimumSize: const Size(double.infinity, 48),
-              ),
-              child: context.watch<SessionProvider>().isUpdating
+              icon: context.watch<SessionProvider>().isUpdating
+                  ? const SizedBox()
+                  : const Icon(Icons.save, color: Colors.white,),
+              label: context.watch<SessionProvider>().isUpdating
                   ? const SizedBox(
-                      width: 20,
-                      height: 20,
+                      width: 18,
+                      height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.white,
+                        ),
                       ),
                     )
-                  : const Text('Save'),
+                  : const Text('Save Session', style: TextStyle(color: Colors.white),),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size(double.infinity, 48),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
             ),
           ],
         ),

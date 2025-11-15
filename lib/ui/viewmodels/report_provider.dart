@@ -43,4 +43,34 @@ class ReportProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<void> getClassReport({
+    required int branchCode,
+    required int semester,
+    required String section,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    _isLoading = true;
+    _success = false;
+    _errorMessage = null;
+    notifyListeners();
+
+    final result = await _reportRepository.fetchClassAttendanceReport(
+      branchCode,
+      semester,
+      section,
+      startDate,
+      endDate
+    );
+    _isLoading = false;
+    if (result['success']) {
+      _success = true;
+      _attendanceReport = result['attendanceReport'];
+    } else {
+      _errorMessage = result['message'];
+    }
+    notifyListeners();
+  }
+
 }

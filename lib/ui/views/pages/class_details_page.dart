@@ -49,7 +49,10 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
       context,
       MaterialPageRoute(
         builder: (context) {
-          return MarkAttendancePage(sessionRegister: sessionVm.sessionRegister);
+          return MarkAttendancePage(
+            sessionRegister: sessionVm.sessionRegister,
+            classModel: widget.classModel,
+          );
         },
       ),
     );
@@ -75,6 +78,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
           builder: (context) {
             return MarkAttendancePage(
               sessionRegister: sessionVm.sessionRegister,
+              classModel: widget.classModel,
             );
           },
         ),
@@ -118,10 +122,10 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: SingleChildScrollView(
           child: Column(
-            spacing: 24,
+            spacing: 20,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // buttons
+              // Action Buttons
               Row(
                 spacing: 12,
                 children: [
@@ -134,13 +138,21 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                               height: 18,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
                               ),
                             )
                           : const Text('New Session'),
                       icon: sessionVm.isCreating
                           ? const SizedBox()
                           : const Icon(Icons.add),
+                      style: FilledButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                     ),
                   ),
                   Expanded(
@@ -154,77 +166,145 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                               height: 20,
                               child: CircularProgressIndicator(),
                             )
-                          : Text('View Report'),
+                          : const Text('View Report'),
                       icon: reportVm.isLoading
                           ? const SizedBox()
-                          : Icon(Icons.analytics_outlined),
+                          : const Icon(Icons.analytics_outlined),
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        side: BorderSide(color: Colors.grey.shade300),
+                      ),
                     ),
                   ),
                 ],
               ),
 
-              // session list
+              // Sessions Section
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 12,
                 children: [
                   Text(
                     'Sessions for ${DateFormat.MMM().format(_selectedDay)} ${_selectedDay.day}, ${_selectedDay.year}',
-                    style: TextStyle(fontSize: 16),
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   sessionVm.isLoading
-                      ? Center(child: const CircularProgressIndicator())
-                      : sessionVm.loaded
-                      ? sessionVm.sessions.isEmpty
-                            ? Center(
-                                child: Text(
-                                  "No sessions on ${DateFormat.MMM().format(_selectedDay)} ${_selectedDay.day}, ${_selectedDay.year}",
-                                ),
-                              )
-                            : ListView.separated(
-                              shrinkWrap: true,
-                              itemCount: sessionVm.sessions.length,
-                              separatorBuilder: (context, index) => SizedBox(height: 4,),
-                              itemBuilder: (context, index) {
-                                return SessionCard(session: sessionVm.sessions[index], handleDeleteSession: _handleDeleteSession, handleEditSession: _handleEditSession);
-                              },
-                            )
-                      : Center(
-                          child: Text(
-                            "No sessions on ${DateFormat.MMM().format(_selectedDay)} ${_selectedDay.day}, ${_selectedDay.year}",
+                      ? const SizedBox(
+                          height: 200,
+                          child: Center(
+                            child: CircularProgressIndicator(),
                           ),
-                        ),
+                        )
+                      : sessionVm.loaded
+                          ? sessionVm.sessions.isEmpty
+                              ? SizedBox(
+                                  height: 200,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.inbox_outlined,
+                                          size: 48,
+                                          color: Colors.grey.shade400,
+                                        ),
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          "No sessions on ${DateFormat.MMM().format(_selectedDay)} ${_selectedDay.day}, ${_selectedDay.year}",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.copyWith(
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : ListView.separated(
+                                  shrinkWrap: true,
+                                  physics:
+                                      const NeverScrollableScrollPhysics(),
+                                  itemCount: sessionVm.sessions.length,
+                                  separatorBuilder: (context, index) =>
+                                      const SizedBox(height: 8),
+                                  itemBuilder: (context, index) {
+                                    return SessionCard(
+                                      session: sessionVm.sessions[index],
+                                      handleDeleteSession:
+                                          _handleDeleteSession,
+                                      handleEditSession: _handleEditSession,
+                                    );
+                                  },
+                                )
+                          : SizedBox(
+                              height: 200,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.inbox_outlined,
+                                      size: 48,
+                                      color: Colors.grey.shade400,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      "No sessions on ${DateFormat.MMM().format(_selectedDay)} ${_selectedDay.day}, ${_selectedDay.year}",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                 ],
               ),
 
-              // date picker
+              // Date Picker Section
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 12,
                 children: [
-                  Text('Select a Date', style: TextStyle(fontSize: 16)),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(12),
+                  Text(
+                    'Select Date',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
                     ),
-                    child: CalendarDatePicker(
-                      initialDate: _selectedDay,
-                      firstDate: DateTime(
-                        2000,
-                      ), // Define your earliest allowable date
-                      lastDate: DateTime(
-                        2050,
-                      ), // Define your latest allowable date
-                      onDateChanged: (DateTime newDate) {
-                        setState(() {
-                          _selectedDay = newDate;
-                        });
-                        sessionVm.getSessionsByDate(
-                          widget.classModel.classId,
-                          _selectedDay,
-                        );
-                      },
+                  ),
+                  Material(
+                    borderRadius: BorderRadius.circular(12),
+                    elevation: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.grey.shade200),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: CalendarDatePicker(
+                        initialDate: _selectedDay,
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2050),
+                        onDateChanged: (DateTime newDate) {
+                          setState(() {
+                            _selectedDay = newDate;
+                          });
+                          sessionVm.getSessionsByDate(
+                            widget.classModel.classId,
+                            _selectedDay,
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],

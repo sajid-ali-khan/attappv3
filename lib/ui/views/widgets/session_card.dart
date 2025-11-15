@@ -35,50 +35,99 @@ class _SessionCardState extends State<SessionCard> {
         sessionVm.isFetching &&
         sessionVm.fetchingSessionRegisterId == widget.session.sessionId;
 
-    return Card(
-      color: Colors.indigo.shade50,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: isLoading
-            ? null
-            : () {
-                _editSession(widget.session.sessionId);
-              },
-        onLongPress: () async {
-          final confirm = await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Delete Session'),
-              content: Text(
-                'Are you sure you want to delete "${widget.session.sessionName}"?',
+    return Material(
+      borderRadius: BorderRadius.circular(12),
+      elevation: 0,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: isLoading
+              ? null
+              : () {
+                  _editSession(widget.session.sessionId);
+                },
+          onLongPress: () async {
+            final confirm = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Delete Session'),
+                content: Text(
+                  'Are you sure you want to delete "${widget.session.sessionName}"?',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    child: const Text('Delete'),
+                  ),
+                ],
               ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Cancel'),
+            );
+
+            if (confirm == true) {
+              _deleteSession(widget.session.sessionId);
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              spacing: 12,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.indigo.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.schedule,
+                    color: Colors.indigo.shade700,
+                    size: 20,
+                  ),
                 ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: const Text('Delete'),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 2,
+                    children: [
+                      Text(
+                        widget.session.sessionName,
+                        style:
+                            Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        widget.session.updatedAtLocal,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Icon(
+                        Icons.arrow_forward_ios,
+                        size: 14,
+                        color: Colors.grey.shade600,
+                      ),
               ],
             ),
-          );
-
-          if (confirm == true) {
-            _deleteSession(widget.session.sessionId);
-          }
-        },
-        child: ListTile(
-          trailing: isLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.arrow_forward_ios),
-          title: Text(widget.session.sessionName),
-          leading: Text(widget.session.updatedAtLocal),
+          ),
         ),
       ),
     );
