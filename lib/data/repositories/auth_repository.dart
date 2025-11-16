@@ -35,4 +35,5 @@ class AuthRepository {
       return {'success': false, 'message': 'Something went wrong.'};
     }
   }
+
 }

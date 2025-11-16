@@ -1,6 +1,7 @@
 import 'package:attappv1/ui/viewmodels/auth_provider.dart';
 import 'package:attappv1/ui/viewmodels/class_provider.dart';
 import 'package:attappv1/ui/viewmodels/classes_provider.dart';
+import 'package:attappv1/ui/viewmodels/faculty_provider.dart';
 import 'package:attappv1/ui/viewmodels/report_provider.dart';
 import 'package:attappv1/ui/viewmodels/session_provider.dart';
 import 'package:attappv1/ui/views/pages/splash_screen.dart';
@@ -22,6 +23,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => SessionProvider()),
         ChangeNotifierProvider(create: (_) => ReportProvider()),
         ChangeNotifierProvider(create: (_) => ClassProvider()),
+        ChangeNotifierProvider(create: (_) => FacultyProvider()),
       ],
       child: const MyApp(),
     ),

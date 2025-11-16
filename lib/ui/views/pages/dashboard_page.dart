@@ -1,7 +1,7 @@
-import 'package:attappv1/data/services/api/faculty_service.dart';
-import 'package:attappv1/data/services/shared_prefs_service.dart';
 import 'package:attappv1/data/services/token_service.dart';
 import 'package:attappv1/ui/viewmodels/classes_provider.dart';
+import 'package:attappv1/ui/viewmodels/faculty_provider.dart';
+import 'package:attappv1/ui/views/pages/change_password_page.dart';
 import 'package:attappv1/ui/views/pages/class_selection_page.dart';
 import 'package:attappv1/ui/views/pages/login_page.dart';
 import 'package:attappv1/ui/views/widgets/class_card.dart';
@@ -16,23 +16,15 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  String facultyName = '';
   final _tokenService = TokenService();
 
   @override
   void initState() {
     super.initState();
-    fetchFacultyName();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<FacultyProvider>().getFacultyName('');
       context.read<ClassesProvider>().getClasses();
     });
-  }
-
-  void fetchFacultyName() async {
-    String? fname =
-        await getSharedPrefs("facultyName") ?? await getFacultyName();
-    if (fname == null) return;
-    setState(() => facultyName = fname);
   }
 
   void _handleLogout() async {
@@ -42,6 +34,10 @@ class _DashboardPageState extends State<DashboardPage> {
       context,
       MaterialPageRoute(builder: (_) => const LoginPage()),
     );
+  }
+
+  void _handleChangePassword() async {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangePasswordPage(),));
   }
 
   @override
@@ -59,10 +55,22 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: _handleLogout,
-            icon: Icon(Icons.logout, color: Colors.grey.shade700),
-          ),
+          PopupMenuButton(
+            color: Colors.white,
+            itemBuilder: (context) => [
+            PopupMenuItem(value: 'change_password', child: Text('Change Password')),
+            PopupMenuItem(value: 'logout', child: Row(children: [
+              Icon(Icons.logout, color: Colors.grey.shade700,),
+              SizedBox(width: 8,),
+              Text('Logout')
+            ],),)
+          ], onSelected: (value) {
+            if (value == 'logout') {
+              _handleLogout();
+            } else if (value == 'change_password') {
+              _handleChangePassword();
+            }
+          },)
         ],
       ),
       body: Padding(
@@ -155,7 +163,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ),
                 Text(
-                  'Welcome back, $facultyName',
+                  'Welcome back, ${context.watch<FacultyProvider>().facultyName}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Colors.grey.shade600,
                   ),
