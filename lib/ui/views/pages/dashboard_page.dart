@@ -48,23 +48,39 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        elevation: 0,
         title: Text(
           'Attendance Management',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w700,
           ),
         ),
         actions: [
           PopupMenuButton(
             color: Colors.white,
             itemBuilder: (context) => [
-            PopupMenuItem(value: 'change_password', child: Text('Change Password')),
-            PopupMenuItem(value: 'logout', child: Row(children: [
-              Icon(Icons.logout, color: Colors.grey.shade700,),
-              SizedBox(width: 8,),
-              Text('Logout')
-            ],),)
-          ], onSelected: (value) {
+              PopupMenuItem(
+                value: 'change_password',
+                child: Text(
+                  'Change Password',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+              PopupMenuItem(
+                value: 'logout',
+                child: Row(
+                  spacing: 8,
+                  children: [
+                    Icon(Icons.logout, color: Colors.grey.shade700),
+                    Text(
+                      'Logout',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    )
+                  ],
+                ),
+              )
+            ],
+            onSelected: (value) {
             if (value == 'logout') {
               _handleLogout();
             } else if (value == 'change_password') {
@@ -154,17 +170,17 @@ class _DashboardPageState extends State<DashboardPage> {
             // My Classes Section
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 12,
+              spacing: 8,
               children: [
                 Text(
                   'My Classes',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 Text(
                   'Welcome back, ${context.watch<FacultyProvider>().facultyName}',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey.shade600,
                   ),
                 ),
@@ -189,21 +205,28 @@ class _DashboardPageState extends State<DashboardPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.inbox_outlined,
-                                size: 48,
-                                color: Colors.grey.shade400,
+                              Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.inbox_outlined,
+                              size: 48,
+                              color: Colors.grey.shade400,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'No classes assigned to you',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                color: Colors.grey.shade600,
                               ),
-                              const SizedBox(height: 12),
-                              Text(
-                                'No classes assigned to you',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                             ],
                           ),
                         ),
