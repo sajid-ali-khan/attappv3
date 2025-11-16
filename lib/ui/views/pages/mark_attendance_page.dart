@@ -4,6 +4,7 @@ import 'package:attappv1/ui/viewmodels/session_provider.dart';
 import 'package:attappv1/ui/views/widgets/custom_appbar2.dart';
 import 'package:attappv1/ui/views/widgets/shared.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class MarkAttendancePage extends StatefulWidget {
@@ -34,6 +35,11 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
 
   void _handleSessionUpdate() async {
     final sessionVm = context.read<SessionProvider>();
+
+    // If session name is empty, set it to 'Untitled'
+    if (widget.sessionRegister.sessionName.isEmpty) {
+      widget.sessionRegister.sessionName = 'Untitled';
+    }
 
     await sessionVm.updateSessionRegister(widget.sessionRegister);
 
@@ -69,36 +75,88 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
         child: Column(
           spacing: 16,
           children: [
-            // Session Name Input
-            TextField(
-              controller: _sessionNameController,
-              onChanged: (value) => setState(() {
-                widget.sessionRegister.sessionName =
-                    _sessionNameController.text.trim();
-              }),
-              decoration: InputDecoration(
-                labelText: 'Session name',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey.shade200),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(
-                    color: Colors.indigo,
-                    width: 2,
+            // Session Name Input with Creation Time
+            Row(
+              spacing: 12,
+              children: [
+                Expanded(
+                  child: Material(
+                    borderRadius: BorderRadius.circular(8),
+                    elevation: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey.shade200),
+                      ),
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 4,
+                        children: [
+                          Text(
+                            'Session Name',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.grey.shade600,
+                              fontSize: 11,
+                            ),
+                          ),
+                          TextField(
+                            controller: _sessionNameController,
+                            onChanged: (value) => setState(() {
+                              widget.sessionRegister.sessionName =
+                                  _sessionNameController.text.trim();
+                            }),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              contentPadding: EdgeInsets.zero,
+                              isDense: true,
+                            ),
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade800,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                fillColor: Colors.grey.shade50,
-                filled: true,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
+                Material(
+                  borderRadius: BorderRadius.circular(8),
+                  elevation: 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade200),
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      spacing: 4,
+                      children: [
+                        Text(
+                          'Created',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.grey.shade600,
+                            fontSize: 11,
+                          ),
+                        ),
+                        Text(
+                          '${DateFormat('hh:mm a').format(widget.sessionRegister.createdAtLocal)}, ${DateFormat('MMM dd').format(widget.sessionRegister.createdAtLocal)}',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade800,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
 
             // Attendance Summary Card

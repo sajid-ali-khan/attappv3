@@ -13,6 +13,7 @@ SessionRegister _$SessionRegisterFromJson(Map<String, dynamic> json) =>
       presentCount: (json['presentCount'] as num).toInt(),
       totalCount: (json['totalCount'] as num).toInt(),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
+      createdAt: DateTime.parse(json['createdAt'] as String),
       attendanceRowMap: (json['attendanceRowMap'] as Map<String, dynamic>).map(
         (k, e) =>
             MapEntry(k, AttendanceRow.fromJson(e as Map<String, dynamic>)),
@@ -26,5 +27,6 @@ Map<String, dynamic> _$SessionRegisterToJson(SessionRegister instance) =>
       'presentCount': instance.presentCount,
       'totalCount': instance.totalCount,
       'updatedAt': instance.updatedAt.toIso8601String(),
+      'createdAt': instance.createdAt.toIso8601String(),
       'attendanceRowMap': instance.attendanceRowMap,
     };

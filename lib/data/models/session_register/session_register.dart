@@ -11,6 +11,7 @@ class SessionRegister {
     required this.presentCount,
     required this.totalCount,
     required this.updatedAt,
+    required this.createdAt,
     required this.attendanceRowMap
   });
   int sessionId;
@@ -18,8 +19,10 @@ class SessionRegister {
   int presentCount;
   int totalCount;
   DateTime updatedAt;
+  DateTime createdAt;
 
   DateTime get updatedAtLocal => updatedAt.toLocal();
+  DateTime get createdAtLocal => createdAt.toLocal();
   
   Map<String, AttendanceRow> attendanceRowMap;
 
