@@ -43,9 +43,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 Text(
                   'to continue to Attendance Management',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey.shade600,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
                 ),
               ],
             ),
@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(
-                        color: Colors.indigo,
+                        color: Color(0xFF3F51B5),
                         width: 2,
                       ),
                     ),
@@ -126,9 +126,7 @@ class _LoginPageState extends State<LoginPage> {
             auth.isLoading
                 ? const SizedBox(
                     height: 48,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    child: Center(child: CircularProgressIndicator()),
                   )
                 : FilledButton(
                     onPressed: () async {

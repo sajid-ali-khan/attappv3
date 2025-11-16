@@ -15,11 +15,3 @@ StudentAttendance _$StudentAttendanceFromJson(Map<String, dynamic> json) =>
       attendancePercentage: (json['attendancePercentage'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$StudentAttendanceToJson(StudentAttendance instance) =>
-    <String, dynamic>{
-      'roll': instance.roll,
-      'name': instance.name,
-      'presentDays': instance.presentDays,
-      'totalDays': instance.totalDays,
-      'attendancePercentage': instance.attendancePercentage,
-    };

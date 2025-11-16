@@ -19,9 +19,3 @@ AttendanceReport _$AttendanceReportFromJson(Map<String, dynamic> json) =>
           ),
     );
 
-Map<String, dynamic> _$AttendanceReportToJson(AttendanceReport instance) =>
-    <String, dynamic>{
-      'className': instance.className,
-      'subjectName': instance.subjectName,
-      'studentAttendanceMap': instance.studentAttendanceMap,
-    };
