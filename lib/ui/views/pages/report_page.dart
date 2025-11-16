@@ -246,8 +246,8 @@ class _ReportPageState extends State<ReportPage> {
       backgroundColor: Colors.white,
       appBar: CustomAppbar2(
         title: 'Attendance Report',
-        subTitle: widget.consolidated
-            ? 'Branch: ${widget.branchCode}, Sem: ${widget.semester}, Sec: ${widget.section}'
+        subTitle: _currentReport == null? 'Loading...'
+            : widget.consolidated? _currentReport!.className
             : '${widget.classModel.className} - ${widget.classModel.subjectName}',
       ),
       body: SingleChildScrollView(

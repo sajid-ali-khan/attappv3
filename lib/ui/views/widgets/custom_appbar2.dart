@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomAppbar2 extends StatelessWidget
-    implements PreferredSizeWidget {
+class CustomAppbar2 extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final String subTitle;
   final VoidCallback? onBack;
@@ -18,9 +17,7 @@ class CustomAppbar2 extends StatelessWidget
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(
-          bottom: BorderSide(color: Colors.grey.shade200),
-        ),
+        border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
       ),
       child: SafeArea(
         bottom: false,
@@ -40,24 +37,29 @@ class CustomAppbar2 extends StatelessWidget
                 constraints: const BoxConstraints(),
               ),
               const SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 4,
-                children: [
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: Colors.grey.shade900,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: Colors.grey.shade900,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  Text(
-                    subTitle,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey.shade600,
+                    const SizedBox(height: 4),
+                    Text(
+                      subTitle,
+                      style: Theme.of(context).textTheme.bodySmall
+                          ?.copyWith(color: Colors.grey.shade600),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -67,5 +69,5 @@ class CustomAppbar2 extends StatelessWidget
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(70);
+  Size get preferredSize => const Size.fromHeight(70); // Keep at 70
 }

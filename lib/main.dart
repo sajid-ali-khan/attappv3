@@ -5,6 +5,7 @@ import 'package:attappv1/ui/viewmodels/report_provider.dart';
 import 'package:attappv1/ui/viewmodels/session_provider.dart';
 import 'package:attappv1/ui/views/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl_standalone.dart';
 import 'package:provider/provider.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         canvasColor: Colors.white,
+        fontFamily: GoogleFonts.poppins().fontFamily,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
       ),
       home: SplashScreen(),
