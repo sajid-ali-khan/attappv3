@@ -81,7 +81,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.grey.shade700),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF666666)),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -152,20 +152,20 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(color: Colors.grey.shade200),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(
                             color: Colors.indigo,
                             width: 2,
                           ),
                         ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Colors.red),
+                        errorBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(color: Colors.red),
                         ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
+                        focusedErrorBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(
                             color: Colors.red,
                             width: 2,
                           ),
@@ -229,20 +229,20 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(color: Colors.grey.shade200),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(
                             color: Colors.indigo,
                             width: 2,
                           ),
                         ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Colors.red),
+                        errorBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(color: Colors.red),
                         ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
+                        focusedErrorBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(
                             color: Colors.red,
                             width: 2,
                           ),
@@ -306,20 +306,20 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(color: Colors.grey.shade200),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(
                             color: Colors.indigo,
                             width: 2,
                           ),
                         ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Colors.red),
+                        errorBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(color: Colors.red),
                         ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
+                        focusedErrorBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(
                             color: Colors.red,
                             width: 2,
                           ),

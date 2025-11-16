@@ -27,9 +27,9 @@ class CustomAppbar2 extends StatelessWidget implements PreferredSizeWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_back,
-                  color: Colors.grey.shade700,
+                  color: Color(0xFF666666),
                   size: 22,
                 ),
                 onPressed: onBack ?? () => Navigator.pop(context),

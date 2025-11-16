@@ -87,9 +87,9 @@ class _SessionCardState extends State<SessionCard> {
                     color: Colors.indigo.shade100,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.schedule,
-                    color: Colors.indigo.shade700,
+                    color: Color(0xFF4C3FBB),
                     size: 20,
                   ),
                 ),
@@ -120,10 +120,10 @@ class _SessionCardState extends State<SessionCard> {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : Icon(
+                    : const Icon(
                         Icons.arrow_forward_ios,
                         size: 14,
-                        color: Colors.grey.shade600,
+                        color: Color(0xFF999999),
                       ),
               ],
             ),

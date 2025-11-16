@@ -81,12 +81,13 @@ class _DashboardPageState extends State<DashboardPage> {
               )
             ],
             onSelected: (value) {
-            if (value == 'logout') {
-              _handleLogout();
-            } else if (value == 'change_password') {
-              _handleChangePassword();
-            }
-          },)
+              if (value == 'logout') {
+                _handleLogout();
+              } else if (value == 'change_password') {
+                _handleChangePassword();
+              }
+            },
+          )
         ],
       ),
       body: Padding(
@@ -126,9 +127,9 @@ class _DashboardPageState extends State<DashboardPage> {
                             color: Colors.indigo.shade100,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.assessment,
-                            color: Colors.indigo.shade700,
+                            color: Color(0xFF4C3FBB),
                             size: 24,
                           ),
                         ),
@@ -158,8 +159,8 @@ class _DashboardPageState extends State<DashboardPage> {
                             ],
                           ),
                         ),
-                        Icon(Icons.arrow_forward_ios,
-                            size: 16, color: Colors.grey.shade600),
+                        const Icon(Icons.arrow_forward_ios,
+                            size: 16, color: Color(0xFF999999)),
                       ],
                     ),
                   ),
@@ -205,28 +206,21 @@ class _DashboardPageState extends State<DashboardPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.inbox_outlined,
-                              size: 48,
-                              color: Colors.grey.shade400,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'No classes assigned to you',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                color: Colors.grey.shade600,
+                              const Icon(
+                                Icons.inbox_outlined,
+                                size: 48,
+                                color: Color(0xFFCCCCCC),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
+                              const SizedBox(height: 12),
+                              Text(
+                                'No classes assigned to you',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
                             ],
                           ),
                         ),

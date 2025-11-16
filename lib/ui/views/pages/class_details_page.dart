@@ -215,10 +215,10 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Icon(
+                                        const Icon(
                                           Icons.inbox_outlined,
                                           size: 48,
-                                          color: Colors.grey.shade400,
+                                          color: Color(0xFFCCCCCC),
                                         ),
                                         const SizedBox(height: 12),
                                         Text(
@@ -256,10 +256,10 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(
+                                    const Icon(
                                       Icons.inbox_outlined,
                                       size: 48,
-                                      color: Colors.grey.shade400,
+                                      color: Color(0xFFCCCCCC),
                                     ),
                                     const SizedBox(height: 12),
                                     Text(

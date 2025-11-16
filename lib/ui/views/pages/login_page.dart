@@ -15,6 +15,14 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
@@ -64,9 +72,9 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(color: Colors.grey.shade200),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(
+                    focusedBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      borderSide: BorderSide(
                         color: Color(0xFF3F51B5),
                         width: 2,
                       ),
@@ -93,9 +101,9 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(color: Colors.grey.shade200),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(
+                    focusedBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      borderSide: BorderSide(
                         color: Colors.indigo,
                         width: 2,
                       ),

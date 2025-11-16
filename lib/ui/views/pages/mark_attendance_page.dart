@@ -21,6 +21,7 @@ class MarkAttendancePage extends StatefulWidget {
 
 class _MarkAttendancePageState extends State<MarkAttendancePage> {
   final _sessionNameController = TextEditingController();
+  
   void markAllPresent() {
     for (var key in widget.sessionRegister.attendanceRowMap.keys) {
       widget.sessionRegister.attendanceRowMap[key]?.status = true;
@@ -56,9 +57,13 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _sessionNameController.text = widget.sessionRegister.sessionName;
-    });
+    _sessionNameController.text = widget.sessionRegister.sessionName;
+  }
+
+  @override
+  void dispose() {
+    _sessionNameController.dispose();
+    super.dispose();
   }
 
   @override
@@ -107,7 +112,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                               widget.sessionRegister.sessionName =
                                   _sessionNameController.text.trim();
                             }),
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: InputBorder.none,
                               enabledBorder: InputBorder.none,
                               focusedBorder: InputBorder.none,
@@ -316,7 +321,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                   : _handleSessionUpdate,
               icon: context.watch<SessionProvider>().isUpdating
                   ? const SizedBox()
-                  : const Icon(Icons.save, color: Colors.white,),
+                  : const Icon(Icons.save, color: Colors.white),
               label: context.watch<SessionProvider>().isUpdating
                   ? const SizedBox(
                       width: 18,
@@ -328,7 +333,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
                         ),
                       ),
                     )
-                  : const Text('Save Session', style: TextStyle(color: Colors.white),),
+                  : const Text('Save Session', style: TextStyle(color: Colors.white)),
               style: FilledButton.styleFrom(
                 minimumSize: const Size(double.infinity, 48),
                 foregroundColor: Colors.white,

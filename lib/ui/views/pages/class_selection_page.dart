@@ -30,7 +30,7 @@ class _ClassSelectionPageState extends State<ClassSelectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppbar2(
+      appBar: const CustomAppbar2(
         title: 'Consolidated Report',
         subTitle: 'Select class filters to view attendance',
       ),

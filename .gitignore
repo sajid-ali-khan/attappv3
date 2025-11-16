@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+OPTIMIZATION_SAFETY_VERIFICATION.md
+PERFORMANCE_OPTIMIZATION_SUMMARY.md
+RESPONSIVE_BEHAVIOR_GUIDE.md
