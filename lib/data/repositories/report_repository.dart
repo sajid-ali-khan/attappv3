@@ -8,11 +8,24 @@ import 'package:attappv1/data/network/auth_http_client.dart';
 class ReportRepository {
   final _httpClient = AuthHttpClient();
 
-  Future<Map<String, dynamic>> fetchClassAttendanceReport(int branchCode, int semester, String section, DateTime? startDate, DateTime? endDate) async {
+  Future<Map<String, dynamic>> fetchClassAttendanceReport(
+    int branchCode,
+    int semester,
+    String section,
+    DateTime? startDate,
+    DateTime? endDate,
+  ) async {
+
+    var apiUrl = '$baseUrl/student-batches/report/consolidated?branchCode=$branchCode&semester=$semester&section=$section';
+
+    if (startDate != null && endDate != null) {
+      final formattedStartDate = startDate.toIso8601String().split('T')[0];
+      final formattedEndDate = endDate.toIso8601String().split('T')[0];
+      log('startDate: $formattedStartDate, endDate: $formattedEndDate');
+      apiUrl += '&startDate=$formattedStartDate&endDate=$formattedEndDate';
+    }
     try {
-      final uri = Uri.parse(
-        '$baseUrl/student-batches/report/consolidated?branchCode=$branchCode&semester=$semester&section=$section&startDate=${startDate?.toIso8601String().split('T')[0]}&endDate=${endDate?.toIso8601String().split('T')[0]}',
-      );
+      final uri = Uri.parse(apiUrl);
       final response = await _httpClient.get(uri);
 
       if (response.statusCode == 200) {
@@ -30,7 +43,7 @@ class ReportRepository {
       return {'success': false, 'message': 'Something went wrong.'};
     }
   }
-  
+
   Future<Map<String, dynamic>> fetchFullAttendanceReport(int courseId) async {
     final uri = Uri.parse('$baseUrl/courses/$courseId/attendanceReport');
 
