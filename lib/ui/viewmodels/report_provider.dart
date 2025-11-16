@@ -14,26 +14,18 @@ class ReportProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   AttendanceReport get attendanceReport => _attendanceReport!;
 
-  Future<void> getReport({
-    required int courseId,
-    DateTime? startDate,
-    DateTime? endDate,
-  }) async {
+  Future<void> getReport({required int courseId, DateTime? startDate, DateTime? endDate,}) async {
     _isLoading = true;
     _success = false;
     _errorMessage = null;
     notifyListeners();
 
     late final Map<String, dynamic> result;
-    if (startDate == null && endDate == null) {
-      result = await _reportRepository.fetchFullAttendanceReport(courseId);
-    } else {
-      result = await _reportRepository.fetchFullAttendanceReportBetweenDates(
-        courseId,
-        startDate!.toUtc(),
-        endDate!.toUtc(),
-      );
-    }
+    result = await _reportRepository.fetchSubjectAttendanceReport(
+      courseId,
+      startDate,
+      endDate,
+    );
     _isLoading = false;
     if (result['success']) {
       _success = true;
@@ -61,7 +53,7 @@ class ReportProvider extends ChangeNotifier {
       semester,
       section,
       startDate,
-      endDate
+      endDate,
     );
     _isLoading = false;
     if (result['success']) {
@@ -72,5 +64,4 @@ class ReportProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
-
 }

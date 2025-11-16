@@ -15,8 +15,8 @@ class ReportRepository {
     DateTime? startDate,
     DateTime? endDate,
   ) async {
-
-    var apiUrl = '$baseUrl/student-batches/report/consolidated?branchCode=$branchCode&semester=$semester&section=$section';
+    var apiUrl =
+        '$baseUrl/student-batches/report/consolidated?branchCode=$branchCode&semester=$semester&section=$section';
 
     if (startDate != null && endDate != null) {
       final formattedStartDate = startDate.toIso8601String().split('T')[0];
@@ -44,32 +44,24 @@ class ReportRepository {
     }
   }
 
-  Future<Map<String, dynamic>> fetchFullAttendanceReport(int courseId) async {
-    final uri = Uri.parse('$baseUrl/courses/$courseId/attendanceReport');
-
-    return await _fetchAttendanceReport(uri, courseId);
-  }
-
-  Future<Map<String, dynamic>> fetchFullAttendanceReportBetweenDates(
+  Future<Map<String, dynamic>> fetchSubjectAttendanceReport(
     int courseId,
-    DateTime startDate,
-    DateTime endDate,
+    DateTime? startDate,
+    DateTime? endDate,
   ) async {
-    final startDateString = startDate.toIso8601String().split('T')[0];
-    final endDateString = endDate.toIso8601String().split('T')[0];
-    final uri = Uri.parse(
-      '$baseUrl/courses/$courseId/attendanceReport?startDate=$startDateString&endDate=$endDateString',
-    );
+    String apiUrl = '$baseUrl/courses/$courseId/attendanceReport';
 
-    return await _fetchAttendanceReport(uri, courseId);
-  }
+    if (startDate != null && endDate != null) {
+      final formattedStartDate = startDate.toIso8601String().split('T')[0];
+      final formattedEndDate = endDate.toIso8601String().split('T')[0];
 
-  Future<Map<String, dynamic>> _fetchAttendanceReport(
-    Uri uri,
-    int courseId,
-  ) async {
+      log('Without formatting -> startDate: $startDate, endDate: $endDate');
+      log('startDate: $formattedStartDate, endDate: $formattedEndDate');
+      apiUrl += '?startDate=$formattedStartDate&endDate=$formattedEndDate';
+    }
+
     try {
-      final response = await _httpClient.get(uri);
+      final response = await _httpClient.get(Uri.parse(apiUrl));
 
       if (response.statusCode == 200) {
         log('fetched attendance report for course(ID: $courseId)');
