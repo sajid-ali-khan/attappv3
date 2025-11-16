@@ -66,7 +66,7 @@ class _ClassCardState extends State<ClassCard> {
                         ),
                       ),
                       Text(
-                        widget.assignedClass.subjectName,
+                        widget.assignedClass.subjectDisplayName,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Colors.grey.shade600,
                         ),

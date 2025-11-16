@@ -247,8 +247,8 @@ class _ReportPageState extends State<ReportPage> {
       appBar: CustomAppbar2(
         title: 'Attendance Report',
         subTitle: _currentReport == null? 'Loading...'
-            : widget.consolidated? _currentReport!.className
-            : '${widget.classModel.className} - ${widget.classModel.subjectName}',
+            : widget.consolidated? '${_currentReport!.className} - Total Attendance'
+            : '${widget.classModel.className} - ${widget.classModel.subjectDisplayName}',
       ),
       body: SingleChildScrollView(
         child: Container(

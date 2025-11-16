@@ -116,7 +116,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
       backgroundColor: Colors.white,
       appBar: CustomAppbar2(
         title: widget.classModel.className,
-        subTitle: widget.classModel.subjectName,
+        subTitle: widget.classModel.subjectDisplayName,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -184,14 +184,21 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
               // Sessions Section
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 12,
+                spacing: 8,
                 children: [
                   Text(
-                    'Sessions for ${DateFormat.MMM().format(_selectedDay)} ${_selectedDay.day}, ${_selectedDay.year}',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
+                    'Sessions',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
+                  Text(
+                    '${DateFormat.MMM().format(_selectedDay)} ${_selectedDay.day}, ${_selectedDay.year}',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   sessionVm.isLoading
                       ? const SizedBox(
                           height: 200,
@@ -218,7 +225,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                                           "No sessions on ${DateFormat.MMM().format(_selectedDay)} ${_selectedDay.day}, ${_selectedDay.year}",
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodySmall
+                                              .bodyMedium
                                               ?.copyWith(
                                             color: Colors.grey.shade600,
                                           ),
@@ -259,7 +266,7 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
                                       "No sessions on ${DateFormat.MMM().format(_selectedDay)} ${_selectedDay.day}, ${_selectedDay.year}",
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodySmall
+                                          .bodyMedium
                                           ?.copyWith(
                                         color: Colors.grey.shade600,
                                       ),
@@ -274,14 +281,21 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
               // Date Picker Section
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 12,
+                spacing: 8,
                 children: [
                   Text(
-                    'Select Date',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
+                    'Choose Date',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
+                  Text(
+                    'Pick a date to view sessions',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   Material(
                     borderRadius: BorderRadius.circular(12),
                     elevation: 0,

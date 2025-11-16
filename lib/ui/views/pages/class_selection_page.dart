@@ -196,7 +196,8 @@ class _ClassSelectionPageState extends State<ClassSelectionPage> {
     final consolidatedClassModel = ClassModel(
       classId: 0,
       className: 'Consolidated Report',
-      subjectName: 'Branch: $selectedBranchCode, Semester: $selectedSemester, Section: $selectedSection',
+      subjectShortForm: '',
+      subjectFullForm: 'Total Attendance'
     );
 
     Navigator.push(

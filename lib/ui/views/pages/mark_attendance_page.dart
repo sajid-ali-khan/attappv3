@@ -61,7 +61,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
       backgroundColor: Colors.white,
       appBar: CustomAppbar2(
         title: widget.classModel.className,
-        subTitle: widget.classModel.subjectName,
+        subTitle: widget.classModel.subjectDisplayName,
       ),
       body: Container(
         width: double.infinity,

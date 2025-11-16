@@ -1,4 +1,5 @@
 import 'package:attappv1/data/repositories/faculty_repository.dart';
+import 'package:attappv1/data/services/text_service.dart';
 import 'package:flutter/material.dart';
 
 class FacultyProvider extends ChangeNotifier {
@@ -9,7 +10,7 @@ class FacultyProvider extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   bool get success => _success;
-  String get facultyName => _facultyName;
+  String get facultyName => TextService.toCapitalized(_facultyName);
 
   Future<void> getFacultyName(String name) async {
     _facultyName = '';
