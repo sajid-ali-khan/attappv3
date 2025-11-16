@@ -7,17 +7,21 @@ part 'session_model.g.dart';
 class SessionModel {
   int sessionId;
   String sessionName;
+  DateTime createdAt;
   DateTime updatedAt;
 
   SessionModel({
     required this.sessionId,
+    required this.createdAt,
     required this.sessionName,
     required this.updatedAt,
   });
 
   String get updatedAtLocal {
     DateTime localTime = updatedAt.toLocal(); // convert
-    return DateFormat.jm().format(localTime);
+    final formattedTime = DateFormat.jm().format(localTime);
+    final formattedDate = DateFormat.yMMMd().format(localTime);
+    return 'Updated at $formattedTime on $formattedDate';
   }
 
   factory SessionModel.fromJson(Map<String, dynamic> json) =>

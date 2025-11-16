@@ -9,7 +9,7 @@ part of 'branch_model.dart';
 BranchModel _$BranchModelFromJson(Map<String, dynamic> json) => BranchModel(
   shortForm: json['shortForm'] as String,
   fullForm: json['fullForm'] as String,
-  branchCode: json['branchCode'] as int,
+  branchCode: (json['branchCode'] as num).toInt(),
 );
 
 Map<String, dynamic> _$BranchModelToJson(BranchModel instance) =>
