@@ -7,7 +7,6 @@ import 'package:attappv1/ui/viewmodels/session_provider.dart';
 import 'package:attappv1/ui/views/pages/mark_attendance_page.dart';
 import 'package:attappv1/ui/views/pages/report_page.dart';
 import 'package:attappv1/ui/views/widgets/custom_appbar2.dart';
-import 'package:attappv1/ui/views/widgets/no_internet_widget.dart';
 import 'package:attappv1/ui/views/widgets/server_unreachable_widget.dart';
 import 'package:attappv1/ui/views/widgets/session_card.dart';
 import 'package:attappv1/ui/views/widgets/shared.dart';
@@ -328,9 +327,6 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
       ),
       body: Consumer<ConnectionProvider>(
         builder: (context, connection, child) {
-          if (!connection.connectedToInternet) {
-            return const NoInternetWidget();
-          }
           if (!connection.connectedToServer) {
             return const ServerUnreachableWidget();
           }

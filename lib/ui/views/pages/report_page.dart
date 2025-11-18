@@ -4,7 +4,6 @@ import 'package:attappv1/ui/viewmodels/connection_provider.dart';
 import 'package:attappv1/ui/viewmodels/report_provider.dart';
 import 'package:attappv1/ui/views/widgets/attendance_list_widget.dart';
 import 'package:attappv1/ui/views/widgets/custom_appbar2.dart';
-import 'package:attappv1/ui/views/widgets/no_internet_widget.dart';
 import 'package:attappv1/ui/views/widgets/server_unreachable_widget.dart';
 import 'package:attappv1/ui/views/widgets/shared.dart';
 import 'package:flutter/material.dart';
@@ -435,9 +434,6 @@ Widget buildReportPage(reportVm) {
       ),
       body: Consumer<ConnectionProvider>(
         builder: (context, connection, child) {
-          if (!connection.connectedToInternet) {
-            return const NoInternetWidget();
-          }
           if (!connection.connectedToServer){
             return const ServerUnreachableWidget();
           }

@@ -1,7 +1,6 @@
 import 'package:attappv1/ui/viewmodels/auth_provider.dart';
 import 'package:attappv1/ui/viewmodels/connection_provider.dart';
 import 'package:attappv1/ui/views/pages/dashboard_page.dart';
-import 'package:attappv1/ui/views/widgets/no_internet_widget.dart';
 import 'package:attappv1/ui/views/widgets/server_unreachable_widget.dart';
 import 'package:attappv1/ui/views/widgets/shared.dart';
 import 'package:flutter/material.dart';
@@ -142,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                       _passwordController.text.trim(),
                     );
 
-                    if (!context.mounted) return;
+                    if (!mounted) return;
 
                     if (auth.isLoggedIn) {
                       Navigator.pushReplacement(
@@ -185,9 +184,6 @@ class _LoginPageState extends State<LoginPage> {
       extendBodyBehindAppBar: true,
       body: Consumer<ConnectionProvider>(
         builder: (context, connection, child) {
-          if (!connection.connectedToInternet) {
-            return const NoInternetWidget();
-          }
           if (!connection.connectedToServer) {
             return const ServerUnreachableWidget();
           }

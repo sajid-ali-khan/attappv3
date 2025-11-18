@@ -1,57 +1,71 @@
 import 'dart:async';
-
 import 'package:attappv1/data/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 class ConnectionProvider extends ChangeNotifier {
-  bool _connectedToInternet = false;
-  bool _connectedToServer = false;
-  StreamSubscription? _internetConnectionStreamSubscription;
-  Timer? _serverConnectionTimer;
+  bool _connectedToServer = true;
+  Timer? _retryTimer;
 
-  bool get connectedToInternet => _connectedToInternet;
   bool get connectedToServer => _connectedToServer;
 
-  ConnectionProvider(){
-    monitorInternetConnectivity();
-    monitorServerConnectivity();
-  }
+  /// Call this from anywhere (API client or UI)
+  Future<bool> checkServerOnce() async {
+    try {
+      final serverConnection = InternetConnection.createInstance(
+        customCheckOptions: [
+          InternetCheckOption(uri: Uri.parse('$baseUrl/ping')),
+        ],
+      );
 
-  void monitorInternetConnectivity(){
-    _internetConnectionStreamSubscription = InternetConnection().onStatusChange.listen((event) {
-      switch (event) {
-        case InternetStatus.connected:
-          _connectedToInternet = true;
-          notifyListeners();
-          break;
-        case InternetStatus.disconnected:
-          _connectedToInternet = false;
-          notifyListeners();
-          break;
+      bool isOnline = await serverConnection.hasInternetAccess;
+
+      if (isOnline) {
+        _markOnline();
+      } else {
+        _markOffline();
       }
-    });
+
+      return isOnline;
+    } catch (e) {
+      _markOffline();
+      return false;
+    }
   }
 
-  void monitorServerConnectivity(){
-    final serverConnection = InternetConnection.createInstance(
-      customCheckOptions: [
-        InternetCheckOption(
-          uri: Uri.parse('$baseUrl/ping')
-        )
-      ]
-    );
-
-     _serverConnectionTimer = Timer.periodic(Duration(seconds: 5), (timer) async {
-      _connectedToServer = await serverConnection.hasInternetAccess;
+  void _markOffline() {
+    if (_connectedToServer == true) {
+      _connectedToServer = false;
       notifyListeners();
-    });
+      _startRetry();
+    }
+  }
+
+  void _markOnline() {
+    if (_connectedToServer == false) {
+      _connectedToServer = true;
+      notifyListeners();
+      _stopRetry();
+    }
+  }
+
+  void _startRetry() {
+    _retryTimer ??= Timer.periodic(
+      const Duration(seconds: 12),
+      (_) async {
+        await checkServerOnce();
+      },
+    );
+  }
+
+  void _stopRetry() {
+    _retryTimer?.cancel();
+    _retryTimer = null;
   }
 
   @override
   void dispose() {
-    _internetConnectionStreamSubscription?.cancel();
-    _serverConnectionTimer?.cancel();
+    _retryTimer?.cancel();
     super.dispose();
   }
 }
