@@ -1,5 +1,6 @@
 import 'package:attappv1/data/models/attendance_report/attendance_report.dart';
 import 'package:attappv1/data/models/class_model/class_model.dart';
+import 'package:attappv1/ui/viewmodels/connection_provider.dart';
 import 'package:attappv1/ui/viewmodels/report_provider.dart';
 import 'package:attappv1/ui/views/widgets/attendance_list_widget.dart';
 import 'package:attappv1/ui/views/widgets/custom_appbar2.dart';
@@ -34,6 +35,7 @@ class _ReportPageState extends State<ReportPage> {
   DateTime? _selectedEndDate;
   AttendanceReport? _report;
   AttendanceReport? _currentReport;
+  DateTime? _lastRefresh;
   // mutable copy
   bool _below75 = false;
   bool _below65 = false;
@@ -42,9 +44,13 @@ class _ReportPageState extends State<ReportPage> {
   @override
   void initState() {
     super.initState(); // original data on load
+    reloadDate();
+  }
+
+  void reloadDate() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final reportVm = context.read<ReportProvider>();
-      
+
       if (widget.consolidated) {
         // For consolidated report, use branchCode, semester, and section
         await reportVm.getClassReport(
@@ -133,7 +139,8 @@ class _ReportPageState extends State<ReportPage> {
                     ),
                     firstDate: DateTime(2023),
                     lastDate: DateTime.now(),
-                    dateFormat: DateFormat('d MMM yyyy',
+                    dateFormat: DateFormat(
+                      'd MMM yyyy',
                       Localizations.localeOf(context).toString(),
                     ),
                     onChanged: (value) {
@@ -157,7 +164,8 @@ class _ReportPageState extends State<ReportPage> {
                     ),
                     firstDate: DateTime(2023),
                     lastDate: DateTime.now(),
-                    dateFormat: DateFormat('d MMM yyyy',
+                    dateFormat: DateFormat(
+                      'd MMM yyyy',
                       Localizations.localeOf(context).toString(),
                     ),
                     onChanged: (value) {
@@ -209,7 +217,7 @@ class _ReportPageState extends State<ReportPage> {
 
   Future<void> _refreshData() async {
     final reportVm = context.read<ReportProvider>();
-    
+
     if (widget.consolidated) {
       // For consolidated report, use date filters if provided
       await reportVm.getClassReport(
@@ -239,185 +247,178 @@ class _ReportPageState extends State<ReportPage> {
     }
   }
 
-Widget buildReportPage(reportVm) {
-      return SingleChildScrollView(
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-          child: Column(
-            spacing: 16,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                spacing: 12,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Filters',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+  Widget buildReportPage(reportVm) {
+    return SingleChildScrollView(
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        child: Column(
+          spacing: 16,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              spacing: 12,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Filters',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  children: [
+                    // Date Filter Chip
+                    FilterChip(
+                      label: Row(
+                        spacing: 4,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.date_range, size: 16),
+                          Text(
+                            _selectedStartDate != null &&
+                                    _selectedEndDate != null
+                                ? '${DateFormat('d MMM').format(_selectedStartDate!)} - ${DateFormat('d MMM').format(_selectedEndDate!)}'
+                                : 'Select Date Range',
+                          ),
+                        ],
+                      ),
+                      onSelected: (_) => _showDateFilterDialog(),
+                      backgroundColor: Colors.grey.shade100,
+                      selectedColor: Colors.indigo.shade100,
+                      side: BorderSide(
+                        color:
+                            _selectedStartDate != null &&
+                                _selectedEndDate != null
+                            ? Colors.indigo
+                            : Colors.grey.shade300,
+                      ),
                     ),
-                  ),
-                  Wrap(
-                    spacing: 8.0,
-                    runSpacing: 8.0,
-                    children: [
-                      // Date Filter Chip
-                      FilterChip(
-                        label: Row(
-                          spacing: 4,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.date_range, size: 16),
-                            Text(
-                              _selectedStartDate != null && _selectedEndDate != null
-                                  ? '${DateFormat('d MMM').format(_selectedStartDate!)} - ${DateFormat('d MMM').format(_selectedEndDate!)}'
-                                  : 'Select Date Range',
-                            ),
-                          ],
-                        ),
-                        onSelected: (_) => _showDateFilterDialog(),
-                        backgroundColor: Colors.grey.shade100,
-                        selectedColor: Colors.indigo.shade100,
-                        side: BorderSide(
-                          color: _selectedStartDate != null && _selectedEndDate != null
-                              ? Colors.indigo
-                              : Colors.grey.shade300,
-                        ),
+                    // Sort Chip
+                    FilterChip(
+                      label: Row(
+                        spacing: 4,
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(Icons.sort, size: 16),
+                          Text('Sort by Attendance %'),
+                        ],
                       ),
-                      // Sort Chip
-                      FilterChip(
-                        label: Row(
-                          spacing: 4,
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Icon(Icons.sort, size: 16),
-                            Text('Sort by Attendance %'),
-                          ],
-                        ),
-                        selected: _sortByAttendance,
-                        onSelected: (bool selected) {
-                          setState(() {
-                            _sortByAttendance = selected;
-                            _applyFilters();
-                          });
-                        },
-                        backgroundColor: Colors.grey.shade100,
-                        selectedColor: Colors.indigo.shade100,
-                        side: BorderSide(
-                          color: _sortByAttendance
-                              ? Colors.indigo
-                              : Colors.grey.shade300,
-                        ),
+                      selected: _sortByAttendance,
+                      onSelected: (bool selected) {
+                        setState(() {
+                          _sortByAttendance = selected;
+                          _applyFilters();
+                        });
+                      },
+                      backgroundColor: Colors.grey.shade100,
+                      selectedColor: Colors.indigo.shade100,
+                      side: BorderSide(
+                        color: _sortByAttendance
+                            ? Colors.indigo
+                            : Colors.grey.shade300,
                       ),
-                      FilterChip(
-                        label: const Text('Below 75%'),
-                        selected: _below75,
-                        onSelected: (bool selected) {
-                          setState(() {
-                            _below75 = selected;
-                            _applyFilters();
-                          });
-                        },
-                        backgroundColor: Colors.grey.shade100,
-                        selectedColor: Colors.indigo.shade100,
-                        side: BorderSide(
-                          color: _below75
-                              ? Colors.indigo
-                              : Colors.grey.shade300,
-                        ),
+                    ),
+                    FilterChip(
+                      label: const Text('Below 75%'),
+                      selected: _below75,
+                      onSelected: (bool selected) {
+                        setState(() {
+                          _below75 = selected;
+                          _applyFilters();
+                        });
+                      },
+                      backgroundColor: Colors.grey.shade100,
+                      selectedColor: Colors.indigo.shade100,
+                      side: BorderSide(
+                        color: _below75 ? Colors.indigo : Colors.grey.shade300,
                       ),
-                      FilterChip(
-                        label: const Text('Below 65%'),
-                        selected: _below65,
-                        onSelected: (bool selected) {
-                          setState(() {
-                            _below65 = selected;
-                            _applyFilters();
-                          });
-                        },
-                        backgroundColor: Colors.grey.shade100,
-                        selectedColor: Colors.indigo.shade100,
-                        side: BorderSide(
-                          color: _below65
-                              ? Colors.indigo
-                              : Colors.grey.shade300,
-                        ),
+                    ),
+                    FilterChip(
+                      label: const Text('Below 65%'),
+                      selected: _below65,
+                      onSelected: (bool selected) {
+                        setState(() {
+                          _below65 = selected;
+                          _applyFilters();
+                        });
+                      },
+                      backgroundColor: Colors.grey.shade100,
+                      selectedColor: Colors.indigo.shade100,
+                      side: BorderSide(
+                        color: _below65 ? Colors.indigo : Colors.grey.shade300,
                       ),
-                    ],
-                  ),
-                  
-                  reportVm.isLoading
-                      ? const SizedBox(
-                          height: 300,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        )
-                      : reportVm.success
-                      ? _currentReport == null
-                            ? SizedBox(
-                                height: 300,
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.inbox_outlined,
-                                        size: 48,
-                                        color: Colors.grey.shade400,
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        'No report available',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.copyWith(
-                                              color: Colors.grey.shade600,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
+                    ),
+                  ],
+                ),
+
+                reportVm.isLoading
+                    ? const SizedBox(
+                        height: 300,
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    : reportVm.success
+                    ? _currentReport == null
+                          ? SizedBox(
+                              height: 300,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.inbox_outlined,
+                                      size: 48,
+                                      color: Colors.grey.shade400,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      'No report available',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            color: Colors.grey.shade600,
+                                          ),
+                                    ),
+                                  ],
                                 ),
-                              )
-                            : AttendanceListWidget(
-                                data: _currentReport!.studentAttendanceMap.values
-                                    .toList(),
-                              )
-                      : SizedBox(
-                          height: 300,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.error_outline,
-                                  size: 48,
-                                  color: Colors.red.shade400,
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  'Couldn\'t fetch the report',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.copyWith(
-                                        color: Colors.red.shade600,
-                                      ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            )
+                          : AttendanceListWidget(
+                              data: _currentReport!.studentAttendanceMap.values
+                                  .toList(),
+                            )
+                    : SizedBox(
+                        height: 300,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.error_outline,
+                                size: 48,
+                                color: Colors.red.shade400,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                'Couldn\'t fetch the report',
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(color: Colors.red.shade600),
+                              ),
+                            ],
                           ),
                         ),
-                ],
-              ),
-            ],
-          ),
+                      ),
+              ],
+            ),
+          ],
         ),
-      );
-    }
-    
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final reportVm = context.watch<ReportProvider>();
@@ -426,11 +427,22 @@ Widget buildReportPage(reportVm) {
       backgroundColor: Colors.white,
       appBar: CustomAppbar2(
         title: 'Attendance Report',
-        subTitle: _currentReport == null? 'Loading...'
-            : widget.consolidated? '${_currentReport!.className} - Total Attendance'
+        subTitle: _currentReport == null
+            ? 'Loading...'
+            : widget.consolidated
+            ? '${_currentReport!.className} - Total Attendance'
             : '${widget.classModel.className} - ${widget.classModel.subjectDisplayName}',
       ),
-      body: buildReportPage(reportVm),
+      body: ValueListenableBuilder(
+        valueListenable: context.read<ConnectionProvider>().refreshNotifier,
+        builder: (context, timestamp, child) {
+          if (_lastRefresh != timestamp) {
+            _lastRefresh = timestamp;
+            reloadDate();
+          }
+          return buildReportPage(reportVm);
+        },
+      ),
     );
   }
 }

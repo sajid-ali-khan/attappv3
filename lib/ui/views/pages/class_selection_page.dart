@@ -1,5 +1,6 @@
 import 'package:attappv1/data/models/class_model/class_model.dart';
 import 'package:attappv1/ui/viewmodels/class_provider.dart';
+import 'package:attappv1/ui/viewmodels/connection_provider.dart';
 import 'package:attappv1/ui/views/pages/report_page.dart';
 import 'package:attappv1/ui/views/widgets/custom_appbar2.dart';
 import 'package:attappv1/ui/views/widgets/shared.dart';
@@ -17,10 +18,15 @@ class _ClassSelectionPageState extends State<ClassSelectionPage> {
   String? selectedBranchCode;
   int? selectedSemester;
   String? selectedSection;
+  DateTime _lastRefresh = DateTime.now();
 
   @override
   void initState() {
     super.initState();
+    reloadData();
+  }
+
+  void reloadData() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ClassProvider>().getDistinctBranches();
     });
@@ -193,7 +199,16 @@ class _ClassSelectionPageState extends State<ClassSelectionPage> {
         title: 'Consolidated Report',
         subTitle: 'Select class filters to view attendance',
       ),
-      body: buildClassSelectionForm(),
+      body: ValueListenableBuilder(
+        valueListenable: context.read<ConnectionProvider>().refreshNotifier,
+        builder: (context, timestamp, child) {
+          if (_lastRefresh != timestamp) {
+            _lastRefresh = timestamp;
+            reloadData();
+          }
+          return buildClassSelectionForm();
+        },
+      ),
     );
   }
 

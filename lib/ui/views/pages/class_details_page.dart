@@ -1,6 +1,7 @@
 import 'package:attappv1/data/models/class_model/class_model.dart';
 // ignore: unused_import
 import 'package:attappv1/data/models/session_model/session_model.dart';
+import 'package:attappv1/ui/viewmodels/connection_provider.dart';
 import 'package:attappv1/ui/viewmodels/report_provider.dart';
 import 'package:attappv1/ui/viewmodels/session_provider.dart';
 import 'package:attappv1/ui/views/pages/mark_attendance_page.dart';
@@ -22,9 +23,14 @@ class ClassDetailsPage extends StatefulWidget {
 
 class _ClassDetailsPageState extends State<ClassDetailsPage> {
   DateTime _selectedDay = DateTime.now();
+  DateTime _lastRefresh = DateTime.now();
   @override
   void initState() {
     super.initState();
+    reloadData();
+  }
+
+  void reloadData() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SessionProvider>().getSessionsByDate(
         widget.classModel.classId,
@@ -323,7 +329,16 @@ class _ClassDetailsPageState extends State<ClassDetailsPage> {
         title: widget.classModel.className,
         subTitle: widget.classModel.subjectDisplayName,
       ),
-      body: buildClassDetailsPage(sessionVm, reportVm),
+      body: ValueListenableBuilder(
+        valueListenable: context.read<ConnectionProvider>().refreshNotifier,
+        builder: (context, timestamp, child) {
+          if (_lastRefresh != timestamp) {
+            _lastRefresh = timestamp;
+            reloadData();
+          }
+          return buildClassDetailsPage(sessionVm, reportVm);
+        },
+      )
     );
   }
 }

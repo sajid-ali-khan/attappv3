@@ -1,5 +1,6 @@
 import 'package:attappv1/data/services/token_service.dart';
 import 'package:attappv1/ui/viewmodels/classes_provider.dart';
+import 'package:attappv1/ui/viewmodels/connection_provider.dart';
 import 'package:attappv1/ui/viewmodels/faculty_provider.dart';
 import 'package:attappv1/ui/views/pages/change_password_page.dart';
 import 'package:attappv1/ui/views/pages/class_selection_page.dart';
@@ -17,10 +18,15 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   final _tokenService = TokenService();
+  var _lastRefresh = DateTime.now();
 
   @override
   void initState() {
     super.initState();
+    reloadData();
+  }
+
+  void reloadData() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<FacultyProvider>().getFacultyName('');
       context.read<ClassesProvider>().getClasses();
@@ -62,13 +68,14 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
               child: InkWell(
                 borderRadius: BorderRadius.circular(12),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const ClassSelectionPage(),
                     ),
                   );
+                  reloadData();
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -223,7 +230,17 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ],
       ),
-      body: buildDashboard(classVm),
+      body: ValueListenableBuilder(
+        valueListenable: context.read<ConnectionProvider>().refreshNotifier,
+        builder: (context, timestamp, child) {
+          if (_lastRefresh != timestamp) {
+            _lastRefresh = timestamp;
+            reloadData();
+          }
+
+          return buildDashboard(classVm);
+        },
+      ),
     );
   }
 }

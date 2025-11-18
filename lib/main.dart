@@ -6,6 +6,7 @@ import 'package:attappv1/ui/viewmodels/faculty_provider.dart';
 import 'package:attappv1/ui/viewmodels/report_provider.dart';
 import 'package:attappv1/ui/viewmodels/session_provider.dart';
 import 'package:attappv1/ui/views/pages/splash_screen.dart';
+import 'package:attappv1/ui/views/widgets/connection_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -46,7 +47,23 @@ class MyApp extends StatelessWidget {
         fontFamily: GoogleFonts.poppins().fontFamily,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
       ),
+      
+      builder: (context, child) {
+        return Stack(
+          children: [
+            child!, // this is every screen in your app
+            const Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: ConnectionBanner(),
+            ),
+          ],
+        );
+      },
+
       home: const SplashScreen(),
     );
   }
 }
+

@@ -16,10 +16,7 @@ class AuthHttpClient extends http.BaseClient {
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final connectionProvider = navigatorKey.currentContext!.read<ConnectionProvider>();
 
-    bool ok = await connectionProvider.checkServerOnce();
-    if (!ok) {
-      throw Exception("SERVER_UNREACHABLE");
-    }
+    // await connectionProvider.checkServerOnce();
 
     final token = await _tokenService.getToken();
     request.headers['Content-Type'] = 'application/json; charset=UTF-8';
@@ -28,6 +25,11 @@ class AuthHttpClient extends http.BaseClient {
       request.headers['Authorization'] = 'Bearer $token';
     }
 
-    return _inner.send(request);
+    try {
+      return await _inner.send(request);
+    } catch (e) {
+      await connectionProvider.checkServerOnce();
+      rethrow;
+    }
   }
 }
