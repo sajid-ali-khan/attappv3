@@ -1,6 +1,7 @@
 import 'package:attappv1/ui/viewmodels/auth_provider.dart';
 import 'package:attappv1/ui/viewmodels/class_provider.dart';
 import 'package:attappv1/ui/viewmodels/classes_provider.dart';
+import 'package:attappv1/ui/viewmodels/connection_provider.dart';
 import 'package:attappv1/ui/viewmodels/faculty_provider.dart';
 import 'package:attappv1/ui/viewmodels/report_provider.dart';
 import 'package:attappv1/ui/viewmodels/session_provider.dart';
@@ -24,6 +25,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => ReportProvider()),
         ChangeNotifierProvider(create: (_) => ClassProvider()),
         ChangeNotifierProvider(create: (_) => FacultyProvider()),
+        ChangeNotifierProvider(create: (_) => ConnectionProvider()),
       ],
       child: const MyApp(),
     ),
@@ -42,7 +44,7 @@ class MyApp extends StatelessWidget {
         fontFamily: GoogleFonts.poppins().fontFamily,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
       ),
-      home: SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 }
