@@ -27,7 +27,7 @@ class ServerUnreachableWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Please try again later.',
+            'Please try again later or wait for a while till we connect.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Colors.grey.shade600,
                 ),

@@ -42,7 +42,7 @@ class ConnectionProvider extends ChangeNotifier {
       ]
     );
 
-     _serverConnectionTimer = Timer.periodic(Duration(seconds: 10), (timer) async {
+     _serverConnectionTimer = Timer.periodic(Duration(seconds: 5), (timer) async {
       _connectedToServer = await serverConnection.hasInternetAccess;
       notifyListeners();
     });

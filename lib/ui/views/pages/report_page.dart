@@ -1,8 +1,11 @@
 import 'package:attappv1/data/models/attendance_report/attendance_report.dart';
 import 'package:attappv1/data/models/class_model/class_model.dart';
+import 'package:attappv1/ui/viewmodels/connection_provider.dart';
 import 'package:attappv1/ui/viewmodels/report_provider.dart';
 import 'package:attappv1/ui/views/widgets/attendance_list_widget.dart';
 import 'package:attappv1/ui/views/widgets/custom_appbar2.dart';
+import 'package:attappv1/ui/views/widgets/no_internet_widget.dart';
+import 'package:attappv1/ui/views/widgets/server_unreachable_widget.dart';
 import 'package:attappv1/ui/views/widgets/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:date_field/date_field.dart';
@@ -239,18 +242,8 @@ class _ReportPageState extends State<ReportPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final reportVm = context.watch<ReportProvider>();
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CustomAppbar2(
-        title: 'Attendance Report',
-        subTitle: _currentReport == null? 'Loading...'
-            : widget.consolidated? '${_currentReport!.className} - Total Attendance'
-            : '${widget.classModel.className} - ${widget.classModel.subjectDisplayName}',
-      ),
-      body: SingleChildScrollView(
+Widget buildReportPage(reportVm) {
+      return SingleChildScrollView(
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
@@ -425,6 +418,31 @@ class _ReportPageState extends State<ReportPage> {
             ],
           ),
         ),
+      );
+    }
+    
+  @override
+  Widget build(BuildContext context) {
+    final reportVm = context.watch<ReportProvider>();
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: CustomAppbar2(
+        title: 'Attendance Report',
+        subTitle: _currentReport == null? 'Loading...'
+            : widget.consolidated? '${_currentReport!.className} - Total Attendance'
+            : '${widget.classModel.className} - ${widget.classModel.subjectDisplayName}',
+      ),
+      body: Consumer<ConnectionProvider>(
+        builder: (context, connection, child) {
+          if (!connection.connectedToInternet) {
+            return const NoInternetWidget();
+          }
+          if (!connection.connectedToServer){
+            return const ServerUnreachableWidget();
+          }
+          return buildReportPage(reportVm);
+        },
       ),
     );
   }
