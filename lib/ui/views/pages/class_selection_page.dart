@@ -1,9 +1,7 @@
 import 'package:attappv1/data/models/class_model/class_model.dart';
 import 'package:attappv1/ui/viewmodels/class_provider.dart';
-import 'package:attappv1/ui/viewmodels/connection_provider.dart';
 import 'package:attappv1/ui/views/pages/report_page.dart';
 import 'package:attappv1/ui/views/widgets/custom_appbar2.dart';
-import 'package:attappv1/ui/views/widgets/server_unreachable_widget.dart';
 import 'package:attappv1/ui/views/widgets/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -195,14 +193,7 @@ class _ClassSelectionPageState extends State<ClassSelectionPage> {
         title: 'Consolidated Report',
         subTitle: 'Select class filters to view attendance',
       ),
-      body: Consumer<ConnectionProvider>(
-        builder: (context, connection, child) {
-          if (!connection.connectedToServer) {
-            return const ServerUnreachableWidget();
-          }
-          return buildClassSelectionForm();
-        },
-      ),
+      body: buildClassSelectionForm(),
     );
   }
 

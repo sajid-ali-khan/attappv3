@@ -1,12 +1,10 @@
 import 'package:attappv1/data/services/token_service.dart';
 import 'package:attappv1/ui/viewmodels/classes_provider.dart';
-import 'package:attappv1/ui/viewmodels/connection_provider.dart';
 import 'package:attappv1/ui/viewmodels/faculty_provider.dart';
 import 'package:attappv1/ui/views/pages/change_password_page.dart';
 import 'package:attappv1/ui/views/pages/class_selection_page.dart';
 import 'package:attappv1/ui/views/pages/login_page.dart';
 import 'package:attappv1/ui/views/widgets/class_card.dart';
-import 'package:attappv1/ui/views/widgets/server_unreachable_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -225,19 +223,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ],
       ),
-      body: Consumer<ConnectionProvider>(
-        builder:
-            (
-              BuildContext context,
-              ConnectionProvider connection,
-              Widget? child,
-            ) {
-              if (!connection.connectedToServer) {
-                return const ServerUnreachableWidget();
-              }
-              return buildDashboard(classVm);
-            },
-      ),
+      body: buildDashboard(classVm),
     );
   }
 }

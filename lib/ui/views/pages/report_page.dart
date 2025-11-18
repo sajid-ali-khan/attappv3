@@ -1,10 +1,8 @@
 import 'package:attappv1/data/models/attendance_report/attendance_report.dart';
 import 'package:attappv1/data/models/class_model/class_model.dart';
-import 'package:attappv1/ui/viewmodels/connection_provider.dart';
 import 'package:attappv1/ui/viewmodels/report_provider.dart';
 import 'package:attappv1/ui/views/widgets/attendance_list_widget.dart';
 import 'package:attappv1/ui/views/widgets/custom_appbar2.dart';
-import 'package:attappv1/ui/views/widgets/server_unreachable_widget.dart';
 import 'package:attappv1/ui/views/widgets/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:date_field/date_field.dart';
@@ -432,14 +430,7 @@ Widget buildReportPage(reportVm) {
             : widget.consolidated? '${_currentReport!.className} - Total Attendance'
             : '${widget.classModel.className} - ${widget.classModel.subjectDisplayName}',
       ),
-      body: Consumer<ConnectionProvider>(
-        builder: (context, connection, child) {
-          if (!connection.connectedToServer){
-            return const ServerUnreachableWidget();
-          }
-          return buildReportPage(reportVm);
-        },
-      ),
+      body: buildReportPage(reportVm),
     );
   }
 }

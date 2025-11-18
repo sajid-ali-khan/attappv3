@@ -1,7 +1,5 @@
 import 'package:attappv1/ui/viewmodels/auth_provider.dart';
-import 'package:attappv1/ui/viewmodels/connection_provider.dart';
 import 'package:attappv1/ui/views/pages/dashboard_page.dart';
-import 'package:attappv1/ui/views/widgets/server_unreachable_widget.dart';
 import 'package:attappv1/ui/views/widgets/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -182,14 +180,7 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(backgroundColor: Colors.white),
       backgroundColor: Colors.white,
       extendBodyBehindAppBar: true,
-      body: Consumer<ConnectionProvider>(
-        builder: (context, connection, child) {
-          if (!connection.connectedToServer) {
-            return const ServerUnreachableWidget();
-          }
-          return buildLoginForm(auth);
-        },
-      ),
+      body: buildLoginForm(auth),
     );
   }
 }

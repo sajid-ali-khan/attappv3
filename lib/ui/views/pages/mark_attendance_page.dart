@@ -1,9 +1,7 @@
 import 'package:attappv1/data/models/session_register/session_register.dart';
 import 'package:attappv1/data/models/class_model/class_model.dart';
-import 'package:attappv1/ui/viewmodels/connection_provider.dart';
 import 'package:attappv1/ui/viewmodels/session_provider.dart';
 import 'package:attappv1/ui/views/widgets/custom_appbar2.dart';
-import 'package:attappv1/ui/views/widgets/server_unreachable_widget.dart';
 import 'package:attappv1/ui/views/widgets/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -349,14 +347,7 @@ class _MarkAttendancePageState extends State<MarkAttendancePage> {
         title: widget.classModel.className,
         subTitle: widget.classModel.subjectDisplayName,
       ),
-      body: Consumer<ConnectionProvider>(
-        builder: (context, connection, child) {
-          if (!connection.connectedToServer) {
-            return const ServerUnreachableWidget();
-          }
-          return buildMarkAttendancePage();
-        },
-      ),
+      body: buildMarkAttendancePage(),
     );
   }
 }

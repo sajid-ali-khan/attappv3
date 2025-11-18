@@ -1,6 +1,4 @@
-import 'package:attappv1/ui/viewmodels/connection_provider.dart';
 import 'package:attappv1/ui/viewmodels/faculty_provider.dart';
-import 'package:attappv1/ui/views/widgets/server_unreachable_widget.dart';
 import 'package:attappv1/ui/views/widgets/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -419,14 +417,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
         ),
       ),
-      body: Consumer<ConnectionProvider>(
-        builder: (context, connection, child) {
-          if (!connection.connectedToServer) {
-            return const ServerUnreachableWidget();
-          }
-          return buildChangePasswordForm(facultyVm);
-        },
-      ),
+      body: buildChangePasswordForm(facultyVm),
     );
   }
 }
